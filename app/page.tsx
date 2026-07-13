@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { 
-  FaWhatsapp, 
-  FaGraduationCap, 
-  FaBrain, 
-  FaChartBar, 
-  FaBookOpen, 
-  FaCheck, 
-  FaTimes, 
-  FaChevronDown, 
-  FaChevronUp, 
+import Image from "next/image";
+import {
+  FaWhatsapp,
+  FaGraduationCap,
+  FaBrain,
+  FaChartBar,
+  FaBookOpen,
+  FaCheck,
+  FaTimes,
+  FaChevronDown,
+  FaChevronUp,
   FaStar,
   FaFileAlt,
   FaLightbulb,
@@ -206,7 +207,7 @@ const quizDatabase: QuizDatabase = {
 // FAQ Questions
 const faqs = [
   {
-    q: "How does ZED Practice AI create exercises?",
+    q: "How does ZED Prepare AI create exercises?",
     a: "The app leverages advanced curriculum-trained AI models. It looks at the specific country, regional exam targets (e.g. JAMB syllabus, WAEC standards), and the current lesson topic, then generates questions, options, and step-by-step diagnostic solutions tailored to the student's current proficiency level."
   },
   {
@@ -214,7 +215,7 @@ const faqs = [
     a: "We support primary school (Primary 1-6), junior secondary (JSS 1-3), and senior secondary (SSS 1-3). The app contains tailored preparation modules for terminal school examinations as well as external certification exams like WAEC, NECO, and JAMB."
   },
   {
-    q: "How do teachers use ZED Practice AI?",
+    q: "How do teachers use ZED Prepare AI?",
     a: "Teachers can generate quick tests or homework exercises, assign them to students, and receive detailed analytical dashboards. It reveals exactly what percentage of the class failed a specific topic (e.g. 'Quadratic Equations'), helping teachers adapt lesson plans without manual grading."
   },
   {
@@ -278,7 +279,7 @@ export default function Home() {
   const [loadingText, setLoadingText] = useState<string>("");
   const [currentQuestions, setCurrentQuestions] = useState<Question[]>([]);
   const [currentTopic, setCurrentTopic] = useState<string>("");
-  
+
   // Active Question running state
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
@@ -301,7 +302,7 @@ export default function Home() {
   const handleGenerateQuiz = () => {
     setQuizState("generating");
     const steps = [
-      "Connecting to ZED Practice AI engine...",
+      "Connecting to ZED Prepare AI engine...",
       `Checking curriculum standards for ${selectedLevel}...`,
       `Retrieving syllabus matching ${selectedSubject}...`,
       "Generating unique exercise challenges...",
@@ -334,7 +335,7 @@ export default function Home() {
   const handleSelectOption = (optionIndex: number) => {
     if (selectedOptionIndex !== null) return; // Answered already
     setSelectedOptionIndex(optionIndex);
-    
+
     const currentQuestion = currentQuestions[currentQuestionIndex];
     if (optionIndex === currentQuestion.correct) {
       setScore((prev) => prev + 1);
@@ -364,24 +365,24 @@ export default function Home() {
   return (
     <div className={`min-h-screen transition-colors duration-300 font-sans pb-16 selection:bg-orange-500 selection:text-white ${isDarkMode ? 'bg-[#070b13] text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
       {showConfetti && <ConfettiEffect />}
-      
+
       {/* Top Banner / Early Access Info */}
       <div className="bg-gradient-to-r from-orange-600 to-amber-500 text-white text-center py-2.5 px-4 text-sm font-semibold tracking-wide flex flex-wrap items-center justify-center gap-2 shadow-lg">
         <span className="bg-black/20 text-white text-xs px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">
           Pioneer Testers Needed
         </span>
-        <span>🔥 Join the ZED Practice AI Early Access.</span>
-        <a 
-          href="https://play.google.com/apps/internaltest/4701712521080049218" 
-          target="_blank" 
+        <span>🔥 Join the ZED Prepare AI Early Access.</span>
+        <a
+          href="https://play.google.com/apps/internaltest/4701712521080049218"
+          target="_blank"
           rel="noopener noreferrer"
           className="bg-black/30 px-3 py-1 rounded-lg font-bold hover:bg-black/50 transition inline-flex items-center gap-1 shrink-0 ml-1 text-xs"
         >
           🚀 Install Android App
         </a>
-        <a 
-          href="https://chat.whatsapp.com/K4Q6a3nRE4d18u19LUTZ0Z?s=cl&p=a&ilr=2" 
-          target="_blank" 
+        <a
+          href="https://chat.whatsapp.com/K4Q6a3nRE4d18u19LUTZ0Z?s=cl&p=a&ilr=2"
+          target="_blank"
           rel="noopener noreferrer"
           className="underline font-bold hover:text-orange-100 transition inline-flex items-center gap-1 shrink-0 ml-1"
         >
@@ -392,47 +393,49 @@ export default function Home() {
       {/* Header */}
       <header className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between border-b gap-4 transition-colors duration-300 ${isDarkMode ? 'border-slate-800/80' : 'border-slate-200'}`}>
         <div className="flex items-center gap-3">
-          <div className="bg-gradient-to-br from-orange-500 to-amber-600 w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/10 shrink-0">
-            <FaGraduationCap className="text-white text-xl" />
-          </div>
+          <Image
+            src="/images/prepareailogo.jpeg"
+            alt="ZED Prepare AI Logo"
+            width={44}
+            height={44}
+            className="rounded-xl shadow-lg shadow-orange-500/10 shrink-0 object-cover"
+            priority
+          />
           <div>
             <h1 className={`text-xl sm:text-2xl font-black tracking-tight flex items-center gap-1.5 transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-              ZED <span className="text-orange-500">Practice AI</span>
+              ZED <span className="text-orange-500">Prepare AI</span>
             </h1>
             <p className={`text-[10px] uppercase tracking-widest font-semibold transition-colors duration-300 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Custom Study Platform</p>
           </div>
         </div>
-        
+
         {/* Navigation & Theme Switcher */}
         <div className="flex items-center gap-4 flex-wrap justify-center">
           <nav className={`flex items-center p-1 rounded-xl border transition-colors duration-300 ${isDarkMode ? 'bg-slate-900/90 border-slate-800' : 'bg-slate-100 border-slate-200'}`}>
             <button
               onClick={() => setActiveTab("quiz")}
-              className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all duration-200 ${
-                activeTab === "quiz"
-                  ? "bg-orange-500 text-white shadow-md shadow-orange-500/10"
-                  : isDarkMode ? "text-slate-400 hover:text-slate-200" : "text-slate-600 hover:text-slate-900"
-              }`}
+              className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all duration-200 ${activeTab === "quiz"
+                ? "bg-orange-500 text-white shadow-md shadow-orange-500/10"
+                : isDarkMode ? "text-slate-400 hover:text-slate-200" : "text-slate-600 hover:text-slate-900"
+                }`}
             >
               Practice Playground
             </button>
             <button
               onClick={() => setActiveTab("dashboard")}
-              className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all duration-200 ${
-                activeTab === "dashboard"
-                  ? "bg-orange-500 text-white shadow-md shadow-orange-500/10"
-                  : isDarkMode ? "text-slate-400 hover:text-slate-200" : "text-slate-600 hover:text-slate-900"
-              }`}
+              className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all duration-200 ${activeTab === "dashboard"
+                ? "bg-orange-500 text-white shadow-md shadow-orange-500/10"
+                : isDarkMode ? "text-slate-400 hover:text-slate-200" : "text-slate-600 hover:text-slate-900"
+                }`}
             >
               Diagnostics Demo
             </button>
             <button
               onClick={() => setActiveTab("about")}
-              className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all duration-200 ${
-                activeTab === "about"
-                  ? "bg-orange-500 text-white shadow-md shadow-orange-500/10"
-                  : isDarkMode ? "text-slate-400 hover:text-slate-200" : "text-slate-600 hover:text-slate-900"
-              }`}
+              className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all duration-200 ${activeTab === "about"
+                ? "bg-orange-500 text-white shadow-md shadow-orange-500/10"
+                : isDarkMode ? "text-slate-400 hover:text-slate-200" : "text-slate-600 hover:text-slate-900"
+                }`}
             >
               Why ZED?
             </button>
@@ -441,11 +444,10 @@ export default function Home() {
           {/* Theme Toggle Button */}
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className={`p-3 rounded-xl border transition-all duration-200 ${
-              isDarkMode 
-                ? 'bg-slate-900 border-slate-800 text-orange-400 hover:text-orange-300' 
-                : 'bg-white border-slate-200 text-orange-600 hover:bg-slate-100 shadow-sm'
-            }`}
+            className={`p-3 rounded-xl border transition-all duration-200 ${isDarkMode
+              ? 'bg-slate-900 border-slate-800 text-orange-400 hover:text-orange-300'
+              : 'bg-white border-slate-200 text-orange-600 hover:bg-slate-100 shadow-sm'
+              }`}
             title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
           >
             {isDarkMode ? <FaSun className="text-sm" /> : <FaMoon className="text-sm" />}
@@ -455,11 +457,11 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
-        
+
         {/* TAB 1: QUIZ PLAYGROUND */}
         {activeTab === "quiz" && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            
+
             {/* Left Hero & Config column */}
             <div className="lg:col-span-5 space-y-8 animate-slide-in">
               <div>
@@ -472,7 +474,7 @@ export default function Home() {
                 <p className={`mt-4 leading-relaxed text-sm sm:text-base transition-colors duration-300 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                   Get personalized curriculum-aligned study materials at the tap of a button. Prepare smarter for school termly exams, WAEC, NECO, and JAMB.
                 </p>
-                
+
                 {/* Download Button */}
                 <div className="mt-6">
                   <a
@@ -492,7 +494,7 @@ export default function Home() {
                 <h3 className={`text-sm font-bold uppercase tracking-wider mb-5 flex items-center gap-2 transition-colors duration-300 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                   <span className="w-1.5 h-3 bg-orange-500 rounded-sm" /> Generate AI Practice Set
                 </h3>
-                
+
                 <div className="space-y-4">
                   {/* Select Level */}
                   <div>
@@ -576,7 +578,7 @@ export default function Home() {
             {/* Right Simulator Card Column */}
             <div className="lg:col-span-7 animate-slide-in">
               <div className={`border rounded-3xl overflow-hidden shadow-2xl flex flex-col min-h-[480px] transition-all duration-300 ${isDarkMode ? 'bg-[#0f1422] border-slate-800 glow-orange-sm' : 'bg-white border-slate-200 shadow-xl'}`}>
-                
+
                 {/* Simulator Tab Header Bar */}
                 <div className={`border-b px-6 py-4 flex items-center justify-between shrink-0 transition-colors duration-300 ${isDarkMode ? 'bg-[#0a0d16] border-slate-800/80' : 'bg-slate-100 border-slate-200'}`}>
                   <div className="flex items-center gap-2">
@@ -595,7 +597,7 @@ export default function Home() {
 
                 {/* Simulated Content Render */}
                 <div className="p-6 sm:p-8 flex-1 flex flex-col justify-center">
-                  
+
                   {/* STATE 1: IDLE */}
                   {quizState === "idle" && (
                     <div className="text-center py-12 space-y-6">
@@ -605,7 +607,7 @@ export default function Home() {
                       <div className="max-w-md mx-auto space-y-2">
                         <h4 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>Select Subject and Generate!</h4>
                         <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                          Select the target exam and subject on the left, then click generating. ZED Practice AI will custom curate questions based on your curriculum.
+                          Select the target exam and subject on the left, then click generating. ZED Prepare AI will custom curate questions based on your curriculum.
                         </p>
                       </div>
                       <button
@@ -656,17 +658,17 @@ export default function Home() {
                         <p className={`text-base sm:text-lg font-semibold leading-relaxed ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
                           {currentQuestions[currentQuestionIndex].question}
                         </p>
-                        
+
                         {/* Options List */}
                         <div className="grid grid-cols-1 gap-3 pt-2">
                           {currentQuestions[currentQuestionIndex].options.map((option, idx) => {
                             const isCorrect = idx === currentQuestions[currentQuestionIndex].correct;
                             const isSelected = selectedOptionIndex === idx;
-                            
-                            let optionClass = isDarkMode 
-                              ? "bg-[#141b2c] border-slate-800 hover:border-slate-700 text-slate-200" 
+
+                            let optionClass = isDarkMode
+                              ? "bg-[#141b2c] border-slate-800 hover:border-slate-700 text-slate-200"
                               : "bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-700";
-                            
+
                             if (selectedOptionIndex !== null) {
                               if (isCorrect) {
                                 optionClass = "bg-emerald-950/40 border-emerald-500 text-emerald-300";
@@ -766,8 +768,8 @@ export default function Home() {
                             <strong>Focus Topic:</strong> {currentTopic}
                           </p>
                           <p className={`text-xs ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                            <strong>Diagnostic:</strong> {score === currentQuestions.length 
-                              ? "Excellent recall! Ready for examinations on this module." 
+                            <strong>Diagnostic:</strong> {score === currentQuestions.length
+                              ? "Excellent recall! Ready for examinations on this module."
                               : "Solid attempt. Focus on review explanations to correct conceptual gaps."}
                           </p>
                         </div>
@@ -805,13 +807,13 @@ export default function Home() {
             <div className="text-center space-y-3">
               <h2 className={`text-3xl font-black transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>The Teacher & Student Diagnostic Loop</h2>
               <p className={`text-sm max-w-xl mx-auto transition-colors duration-300 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                No more guessing. With ZED Practice AI, quizzes instantly generate performance metrics that show teachers exactly what to reteach and students what to revise.
+                No more guessing. With ZED Prepare AI, quizzes instantly generate performance metrics that show teachers exactly what to reteach and students what to revise.
               </p>
             </div>
 
             {/* Dashboard Mock Grid */}
             <div className={`border rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden space-y-6 transition-all duration-300 ${isDarkMode ? 'bg-[#0f1422] border-slate-800' : 'bg-white border-slate-200'}`}>
-              
+
               {/* Profile Card Header */}
               <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-6 gap-4 ${isDarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
                 <div className="flex items-center gap-3">
@@ -857,7 +859,7 @@ export default function Home() {
                   <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-500 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> Verified Academic Strengths
                   </h4>
-                  
+
                   <div className="space-y-3">
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
@@ -896,7 +898,7 @@ export default function Home() {
                   <h4 className="text-xs font-bold uppercase tracking-widest text-orange-500 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse" /> Highlighted Revision Gaps
                   </h4>
-                  
+
                   <div className="space-y-3">
                     <div>
                       <div className="flex justify-between text-xs font-semibold mb-1">
@@ -947,7 +949,7 @@ export default function Home() {
           <div className="space-y-12 animate-slide-in">
             {/* Mission Statement */}
             <div className="text-center space-y-4 max-w-2xl mx-auto">
-              <h2 className={`text-3xl sm:text-4xl font-black transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Why We Built ZED Practice AI</h2>
+              <h2 className={`text-3xl sm:text-4xl font-black transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Why We Built ZED Prepare AI</h2>
               <p className={`leading-relaxed text-sm sm:text-base transition-colors duration-300 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                 Our mission is to help every student succeed academically through personalized, curriculum-aligned, AI-powered practice. Leveling the academic playing field for primary and secondary learners globally.
               </p>
@@ -955,7 +957,7 @@ export default function Home() {
 
             {/* Core Values / Features Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              
+
               {/* Card 1 */}
               <div className={`border rounded-2xl p-6 space-y-4 relative group transition-all duration-300 ${isDarkMode ? 'bg-[#0f1422] border-slate-800 hover:border-orange-500/30' : 'bg-white border-slate-200 hover:border-orange-500/30 shadow-md'}`}>
                 <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center border border-orange-500/20 text-orange-500 text-xl font-bold">
@@ -1030,15 +1032,15 @@ export default function Home() {
         <section className="mt-20 max-w-4xl mx-auto space-y-8 animate-slide-in">
           <div className="text-center space-y-2">
             <h3 className={`text-2xl sm:text-3xl font-black transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Frequently Asked Questions</h3>
-            <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Everything you need to know about ZED Practice AI and our tester group.</p>
+            <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Everything you need to know about ZED Prepare AI and our tester group.</p>
           </div>
 
           <div className="space-y-4">
             {faqs.map((faq, index) => {
               const isOpen = openFaqIndex === index;
               return (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className={`border rounded-2xl overflow-hidden transition-all duration-300 ${isDarkMode ? 'bg-[#0f1422] border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}
                 >
                   <button
@@ -1064,7 +1066,7 @@ export default function Home() {
           <div className="bg-gradient-to-r from-orange-600/90 to-amber-600/90 rounded-3xl p-8 sm:p-12 text-center space-y-6 shadow-xl shadow-orange-600/10 relative overflow-hidden border border-orange-500/20">
             <div className="absolute top-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
             <div className="absolute bottom-0 right-0 w-32 h-32 bg-black/10 rounded-full blur-2xl" />
-            
+
             <div className="max-w-2xl mx-auto space-y-4">
               <span className="bg-black/25 text-white text-xs px-3 py-1 rounded-full uppercase tracking-wider font-extrabold">
                 Join 100 Pioneers
@@ -1095,7 +1097,7 @@ export default function Home() {
               >
                 <FaWhatsapp className="text-lg text-emerald-400" /> Join WhatsApp Group
               </a>
-              
+
               <a
                 href="https://forms.gle/H6DE9Ubg5BAU3f6x6"
                 target="_blank"
@@ -1111,24 +1113,72 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-800/80 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-center">
-        <div>
-          <p className="text-xs text-slate-500 font-medium">
-            © {new Date().getFullYear()} ZED Practice AI. Prepared for WAEC, NECO, JAMB, and school standards.
-          </p>
-        </div>
-        <div className="flex gap-4 text-xs font-semibold text-slate-400">
-          <a href="https://play.google.com/apps/internaltest/4701712521080049218" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition">
-            Download App
-          </a>
-          <span>•</span>
-          <a href="https://chat.whatsapp.com/K4Q6a3nRE4d18u19LUTZ0Z?s=cl&p=a&ilr=2" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition">
-            Community Chat
-          </a>
-          <span>•</span>
-          <a href="https://forms.gle/H6DE9Ubg5BAU3f6x6" target="_blank" rel="noopener noreferrer" className="hover:text-orange-500 transition">
-            Beta Form
-          </a>
+      <footer className={`mt-24 border-t pt-10 pb-8 transition-colors duration-300 ${isDarkMode ? 'border-slate-800/80' : 'border-slate-200'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Footer Top: Logo + Links */}
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 mb-8">
+            {/* Logo & Brand */}
+            <div className="flex flex-col items-center md:items-start gap-3">
+              <div className="flex items-center gap-3">
+                <Image
+                  src="/images/prepareailogo.jpeg"
+                  alt="ZED Prepare AI Logo"
+                  width={48}
+                  height={48}
+                  className="rounded-xl shadow-md object-cover"
+                />
+                <div>
+                  <p className={`text-lg font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                    ZED <span className="text-orange-500">Prepare AI</span>
+                  </p>
+                  <p className={`text-[10px] uppercase tracking-widest font-semibold ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Custom Study Platform</p>
+                </div>
+              </div>
+              <p className={`text-xs leading-relaxed max-w-xs text-center md:text-left ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                AI-powered exam practice for primary, secondary school students and candidates for WAEC, NECO &amp; JAMB.
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div className="flex flex-wrap justify-center md:justify-end gap-x-8 gap-y-4 text-xs font-semibold">
+              <div className="space-y-2">
+                <p className={`uppercase tracking-widest text-[10px] font-bold ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Get the App</p>
+                <a href="https://play.google.com/apps/internaltest/4701712521080049218" target="_blank" rel="noopener noreferrer" className={`block hover:text-orange-500 transition ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                  🚀 Download on Android
+                </a>
+              </div>
+              <div className="space-y-2">
+                <p className={`uppercase tracking-widest text-[10px] font-bold ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Community</p>
+                <a href="https://chat.whatsapp.com/K4Q6a3nRE4d18u19LUTZ0Z?s=cl&p=a&ilr=2" target="_blank" rel="noopener noreferrer" className={`block hover:text-orange-500 transition ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                  WhatsApp Group
+                </a>
+                <a href="https://forms.gle/H6DE9Ubg5BAU3f6x6" target="_blank" rel="noopener noreferrer" className={`block hover:text-orange-500 transition ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                  Feedback Form
+                </a>
+              </div>
+              <div className="space-y-2">
+                <p className={`uppercase tracking-widest text-[10px] font-bold ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Legal</p>
+                <a href="/policy" className={`block hover:text-orange-500 transition ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                  Privacy Policy
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Bottom: Copyright */}
+          <div className={`border-t pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 ${isDarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
+            <p className={`text-xs font-medium ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>
+              © {new Date().getFullYear()} ZED Prepare AI. Designed for every student who wants to succeed.
+            </p>
+            <div className="flex items-center gap-4">
+              <p className={`text-xs ${isDarkMode ? 'text-slate-700' : 'text-slate-300'}`}>
+                Prepared for WAEC · NECO · JAMB · School Exams
+              </p>
+              <a href="/policy" className={`text-xs hover:text-orange-500 transition-colors ${isDarkMode ? 'text-slate-600 hover:text-orange-400' : 'text-slate-400'}`}>
+                Privacy Policy
+              </a>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
