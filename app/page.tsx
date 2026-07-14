@@ -270,6 +270,21 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<"quiz" | "dashboard" | "about">("quiz");
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      setIsDarkMode(savedTheme === "dark");
+    } else {
+      setIsDarkMode(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }, []);
+
+  const handleToggleTheme = () => {
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    localStorage.setItem("theme", newTheme ? "dark" : "light");
+  };
+
   // Selection state
   const [selectedLevel, setSelectedLevel] = useState<string>("JAMB Prep");
   const [selectedSubject, setSelectedSubject] = useState<string>("Mathematics");
@@ -443,7 +458,7 @@ export default function Home() {
 
           {/* Theme Toggle Button */}
           <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
+            onClick={handleToggleTheme}
             className={`p-3 rounded-xl border transition-all duration-200 ${isDarkMode
               ? 'bg-slate-900 border-slate-800 text-orange-400 hover:text-orange-300'
               : 'bg-white border-slate-200 text-orange-600 hover:bg-slate-100 shadow-sm'
@@ -1158,7 +1173,7 @@ export default function Home() {
               </div>
               <div className="space-y-2">
                 <p className={`uppercase tracking-widest text-[10px] font-bold ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Legal</p>
-                <a href="/policy" className={`block hover:text-orange-500 transition ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                <a href="/privacy" className={`block hover:text-orange-500 transition ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                   Privacy Policy
                 </a>
               </div>
@@ -1174,7 +1189,7 @@ export default function Home() {
               <p className={`text-xs ${isDarkMode ? 'text-slate-700' : 'text-slate-300'}`}>
                 Prepared for WAEC · NECO · JAMB · School Exams
               </p>
-              <a href="/policy" className={`text-xs hover:text-orange-500 transition-colors ${isDarkMode ? 'text-slate-600 hover:text-orange-400' : 'text-slate-400'}`}>
+              <a href="/privacy" className={`text-xs hover:text-orange-500 transition-colors ${isDarkMode ? 'text-slate-600 hover:text-orange-400' : 'text-slate-400'}`}>
                 Privacy Policy
               </a>
             </div>
