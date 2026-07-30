@@ -1,0 +1,72 @@
+# robots.txt for My Website
+# General Information
+# This file is used to manage how search engine crawlers interact with this website.
+
+User-agent: *  # Applies to all crawlers unless specified otherwise
+
+# Allow crawling of all public pages
+Allow: /
+
+# Disallow access to specific private and sensitive directories
+Disallow: /admin/
+Disallow: /login/ 
+Disallow: /register/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /user-settings/
+Disallow: /api/
+Disallow: /backend/
+Disallow: /temp/
+Disallow: /drafts/
+Disallow: /search-results/
+
+# Disallow specific file types
+Disallow: /*.php$
+Disallow: /*.asp$
+Disallow: /*.cgi$
+
+# Block access to private files
+Disallow: /config/
+Disallow: /database/
+Disallow: /logs/
+
+# Block crawlers from indexing query parameters (e.g., pagination)
+Disallow: /*?*
+
+# Allow important assets to be crawled
+Allow: /assets/
+Allow: /images/
+Allow: /css/
+Allow: /js/
+
+# Sitemap location
+Sitemap: https://www.example.com/sitemap.xml
+
+# Special Rules for Certain Crawlers
+User-agent: Googlebot  # Specific rules for Googlebot
+Allow: /
+Disallow: /internal/
+
+User-agent: Bingbot  # Specific rules for Bingbot
+Allow: /
+Disallow: /private/
+
+# Prevent image crawlers from indexing certain images
+User-agent: Googlebot-Image
+Disallow: /private-images/
+
+# Prevent ad bots from accessing the site
+User-agent: AdsBot-Google
+Disallow: /
+
+# Block specific user agents (bad bots)
+User-agent: BadBot
+Disallow: /
+
+User-agent: EvilScraper
+Disallow: /
+
+# Notes
+# - Make sure sensitive directories are properly secured with server-side restrictions.
+# - Keep the robots.txt file updated when website structures or policies change.
+# - Test your robots.txt with Google Search Console and other tools to ensure compliance.
