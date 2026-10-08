@@ -1,1 +1,15 @@
-
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "ng.com.zionai.prepareai",
+      "sha256_cert_fingerprints": [
+        "C5:68:0A:BB:4B:37:F9:8C:F9:17:5A:17:1A:61:54:42:8E:BF:7E:20:1B:AB:2C:08:2B:C7:03:3C:94:B8:5A:33"
+      ]
+    }
+  }
+]
