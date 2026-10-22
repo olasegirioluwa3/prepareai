@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://prepareai.zionai.com.ng/sitemap.xml
