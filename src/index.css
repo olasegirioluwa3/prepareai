@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; font-family: "Inter", "Helvetica Neue", Arial, sans-serif; background: #f6f8fb; }
+button, a, input { -webkit-tap-highlight-color: transparent; }
+
+.grid-pattern { background-image: linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px); background-size: 42px 42px; mask-image: linear-gradient(to bottom, black, transparent 85%); }
+.text-gradient-hero { background: linear-gradient(105deg, #fff 5%, #fed7aa 43%, #fbbf24 95%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity 700ms cubic-bezier(.2,.75,.2,1), transform 700ms cubic-bezier(.2,.75,.2,1); }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+.hero-phone { animation: phone-float 6s ease-in-out infinite; }
+.float-badge { animation: small-float 4.5s ease-in-out infinite; }
+.orb-one { animation: drift-one 12s ease-in-out infinite alternate; }
+.orb-two { animation: drift-two 14s ease-in-out infinite alternate; }
+.world-map { background-image: radial-gradient(circle at 15% 42%, rgba(52,211,153,.75) 0 2px, transparent 3px), radial-gradient(circle at 29% 24%, rgba(129,140,248,.8) 0 2px, transparent 3px), radial-gradient(circle at 48% 45%, rgba(251,191,36,.8) 0 2px, transparent 3px), radial-gradient(circle at 63% 28%, rgba(52,211,153,.75) 0 2px, transparent 3px), radial-gradient(circle at 80% 53%, rgba(129,140,248,.8) 0 2px, transparent 3px), radial-gradient(circle at 88% 29%, rgba(251,191,36,.8) 0 2px, transparent 3px); filter: blur(.2px); }
+
+@keyframes phone-float { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-13px) rotate(1deg); } }
+@keyframes small-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-7px) rotate(5deg); } }
+@keyframes drift-one { from { transform: translate(0, 0) scale(1); } to { transform: translate(70px, -35px) scale(1.13); } }
+@keyframes drift-two { from { transform: translate(0, 0) scale(1); } to { transform: translate(-75px, 45px) scale(1.1); } }
+
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; } .reveal { opacity: 1; transform: none; } }
