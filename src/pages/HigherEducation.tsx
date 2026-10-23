@@ -25,7 +25,7 @@ export default function HigherEducation() {
                 Higher Education, Elevated
               </h1>
               <p className="mt-6 text-lg leading-7 text-orange-50 sm:text-xl">
-                Advanced learning tools for university students, college preparation, and professional development. Master complex subjects with AI-powered practice and global collaboration.
+                Master university-level courses with AI-powered practice. From calculus to constitutional law, organic chemistry to macroeconomics—excel in your degree with tools built for higher education.
               </p>
             </div>
           </div>
@@ -47,12 +47,12 @@ export default function HigherEducation() {
               {
                 icon: BrainCircuit,
                 title: "AI-Powered Learning",
-                description: "Advanced AI generates practice questions tailored to your field of study—whether it's engineering, medicine, business, or liberal arts."
+                description: "Advanced AI generates practice questions tailored to your university courses—whether it's differential equations, organic chemistry, or constitutional law."
               },
               {
                 icon: Target,
                 title: "Exam Preparation",
-                description: "Prepare for SAT, ACT, GRE, GMAT, MCAT, and other standardized exams with targeted practice and performance analytics."
+                description: "Prepare for GRE, GMAT, MCAT, LSAT, TOEFL, IELTS, and professional certification exams with targeted practice and performance analytics."
               },
               {
                 icon: UsersRound,
@@ -62,7 +62,7 @@ export default function HigherEducation() {
               {
                 icon: Zap,
                 title: "Advanced Subject Mastery",
-                description: "Deep-dive into complex topics with specialized content for STEM, humanities, social sciences, and professional programs."
+                description: "Deep-dive into complex university topics with specialized content for engineering, medicine, business, law, and other professional programs."
               },
               {
                 icon: Trophy,
@@ -101,16 +101,16 @@ export default function HigherEducation() {
             <div className="grid gap-8 md:grid-cols-3">
               {[
                 {
-                  level: "College Prep",
-                  description: "Prepare for university entrance exams and build foundational skills for college success."
+                  level: "Freshman & Sophomore",
+                  description: "Build foundational knowledge in core courses—general education requirements, introductory major courses, and academic skills for university success."
                 },
                 {
-                  level: "Undergraduate",
-                  description: "Master course material, prepare for exams, and collaborate with peers across your field."
+                  level: "Junior & Senior",
+                  description: "Master advanced major courses, prepare for comprehensive exams, and collaborate on capstone projects with peers."
                 },
                 {
                   level: "Graduate & Professional",
-                  description: "Advanced study tools for research, professional exams, and continuing education."
+                  description: "Advanced study tools for master's and doctoral research, professional certification exams, and continuing education programs."
                 }
               ].map((item, index) => (
                 <div key={index} className="rounded-2xl bg-[#f6f8fb] p-6 ring-1 ring-slate-200">
@@ -130,24 +130,24 @@ export default function HigherEducation() {
               Comprehensive Subject Coverage
             </h2>
             <p className="mt-4 text-base leading-7 text-slate-600">
-              From STEM to humanities, we've got your academic needs covered.
+              Master university-level courses across all disciplines—from calculus to constitutional law, organic chemistry to cognitive psychology.
             </p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              "Mathematics & Statistics",
-              "Physics & Chemistry",
-              "Biology & Life Sciences",
-              "Computer Science",
-              "Engineering",
-              "Business & Economics",
-              "Literature & Languages",
-              "Social Sciences",
-              "Psychology",
-              "Medicine & Healthcare",
-              "Law",
-              "Arts & Design"
+              "Calculus & Linear Algebra",
+              "Organic Chemistry",
+              "Cell Biology & Genetics",
+              "Data Structures & Algorithms",
+              "Mechanical Engineering",
+              "Macroeconomics & Finance",
+              "World Literature",
+              "Political Science",
+              "Cognitive Psychology",
+              "Anatomy & Physiology",
+              "Constitutional Law",
+              "Graphic Design"
             ].map((subject, index) => (
               <div key={index} className="flex items-center gap-3 rounded-xl bg-white p-4 shadow-sm">
                 <Check className="h-5 w-5 text-emerald-500 shrink-0" />
@@ -168,12 +168,12 @@ export default function HigherEducation() {
 
             <div className="grid gap-6 md:grid-cols-2">
               {[
-                "AI-generated practice questions for your specific courses",
-                "Collaborative study groups with university students worldwide",
-                "Performance analytics to identify knowledge gaps",
-                "Preparation for standardized tests and professional exams",
-                "Verified certifications to enhance your CV",
-                "Mobile learning—study anywhere, anytime"
+                "AI-generated practice questions for your university courses",
+                "Collaborative study groups with students from universities worldwide",
+                "Performance analytics to identify knowledge gaps in your major",
+                "Preparation for graduate entrance exams and professional certifications",
+                "Verified subject certifications to enhance your resume",
+                "Mobile learning—study between lectures, labs, and research sessions"
               ].map((benefit, index) => (
                 <div key={index} className="flex items-start gap-3">
                   <div className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-emerald-500 text-white">
