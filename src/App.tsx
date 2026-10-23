@@ -179,7 +179,7 @@ function LandingPage() {
 
     <footer id="footer" className="bg-[#111827] py-14 text-orange-50 sm:py-16">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]">
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1.2fr]">
           <div>
             <Logo light />
             <p className="mt-5 max-w-xs text-sm leading-6 text-orange-100">Learn smarter. Grow together. Every learner deserves a path that feels made for them—wherever they are learning from.</p>
@@ -227,7 +227,10 @@ function LandingPage() {
           <p className="text-[11px] text-orange-200/70">© 2026 ZED Prepare AI. All rights reserved.</p>
           <div className="flex gap-6 text-[11px] text-orange-200/70">
             <a href="#footer" className="hover:text-white">Terms</a>
-            <Link to="/privacy" className="hover:text-white">Privacy</Link>
+            <RouterLink to="/privacy" className="hover:text-white">Privacy</RouterLink>
+            <RouterLink to="/k-12" className="hover:text-white">K-12</RouterLink>
+            <RouterLink to="/higher-education" className="hover:text-white">Higher Education</RouterLink>
+            <RouterLink to="/partnership" className="hover:text-white">Partnership</RouterLink>
           </div>
         </div>
       </div>
