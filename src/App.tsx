@@ -8,13 +8,16 @@ import {
 } from "lucide-react";
 import { Button, Eyebrow, Logo, LogoMark, Reveal } from "./components/ui";
 import Privacy from "./pages/Privacy";
+import K12 from "./pages/K12";
+import HigherEducation from "./pages/HigherEducation";
 
 const APP_STORE_URL = "https://play.google.com/store/apps/details?id=ng.com.zionai.prepareai&hl=en";
 
 type IconComponent = typeof Sparkles;
 
 const navLinks = [
-  ["How it works", "#how-it-works"], ["For schools", "#schools"],
+  ["How it works", "#how-it-works"], ["K-12", "/k-12"],
+  ["Higher Education", "/higher-education"], ["For schools", "#schools"],
   ["Curriculums", "#curriculums"], ["Pricing", "#pricing"],
 ];
 
@@ -127,6 +130,31 @@ function LandingPage() {
 
       <section className="border-b border-slate-200 bg-white py-8 sm:py-10"><div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-5 sm:flex-row sm:px-8"><p className="text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400 sm:text-left">Chosen by forward-thinking learners and schools around the world</p><div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-base font-bold tracking-[-0.05em] text-slate-400 sm:gap-x-9"><span>Westbridge</span><span>ACADEMIA</span><span>Northstar</span><span>ONE SCHOOL</span></div></div></section>
 
+      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20">
+        <div className="grid gap-8 md:grid-cols-2">
+          <Link to="/k-12" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 p-8 text-white shadow-lg transition hover:-translate-y-1 hover:shadow-xl">
+            <div className="relative z-10">
+              <GraduationCap className="h-12 w-12 mb-4" />
+              <h2 className="text-3xl font-bold">K-12 Learning</h2>
+              <p className="mt-3 text-lg text-orange-100">Empowering students from kindergarten through 12th grade with curriculum-aligned practice and intelligent study tools.</p>
+              <div className="mt-6 inline-flex items-center gap-2 font-semibold text-white transition group-hover:gap-3">
+                Explore K-12 <ArrowRight className="h-5 w-5" />
+              </div>
+            </div>
+          </Link>
+          <Link to="/higher-education" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 p-8 text-white shadow-lg transition hover:-translate-y-1 hover:shadow-xl">
+            <div className="relative z-10">
+              <BookOpen className="h-12 w-12 mb-4" />
+              <h2 className="text-3xl font-bold">Higher Education</h2>
+              <p className="mt-3 text-lg text-slate-300">Advanced learning tools for university students, college preparation, and professional development.</p>
+              <div className="mt-6 inline-flex items-center gap-2 font-semibold text-white transition group-hover:gap-3">
+                Explore Higher Ed <ArrowRight className="h-5 w-5" />
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28"><div className="grid gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-end"><Reveal><Eyebrow>ONE PLATFORM, REAL MOMENTUM</Eyebrow><h2 className="max-w-xl text-4xl font-bold leading-[.98] tracking-[-0.065em] text-slate-950 sm:text-5xl">Learn with your curriculum, not against it.</h2></Reveal><Reveal delay={120}><p className="max-w-xl text-base leading-7 text-slate-600 sm:text-lg">ZED gives students a shared space to prepare, practise, and feel proud of the work they are putting in. For schools, it makes everyday learning more visible, motivating, and connected.</p></Reveal></div><div className="mt-14 grid gap-x-7 gap-y-10 md:grid-cols-3">{[["The gap", "Great study tools too often ignore local standards and leave learners working alone.", Globe2, "01"], ["The shift", "ZED meets students in their curriculum, then adds a global community that makes preparation stick.", Sparkles, "02"], ["The result", "More consistent practice, stronger confidence, and a clearer path from today's lesson to tomorrow's opportunity.", Target, "03"]].map(([label, text, Icon, number], index) => { const IconElement = Icon as IconComponent; return <Reveal key={label as string} delay={index * 100} className="group border-t border-slate-200 pt-5"><div className="flex items-center justify-between"><span className="text-[11px] font-bold tracking-[0.14em] text-orange-600">{label as string}</span><span className="text-[11px] font-bold text-slate-300">{number as string}</span></div><IconElement className="mt-8 h-7 w-7 text-slate-900 transition duration-300 group-hover:-translate-y-1 group-hover:text-orange-600" /><p className="mt-5 max-w-sm text-base leading-7 text-slate-600">{text as string}</p></Reveal>; })}</div></section>
 
       <section id="features" className="bg-white py-20 sm:py-28"><div className="mx-auto max-w-7xl px-5 sm:px-8"><Reveal className="mx-auto max-w-2xl text-center"><Eyebrow>THE ZED EXPERIENCE</Eyebrow><h2 className="text-4xl font-bold leading-[.98] tracking-[-0.065em] text-slate-950 sm:text-5xl">Where serious learning feels more alive.</h2><p className="mt-5 text-base leading-7 text-slate-600">A complete learning loop designed to help every student show up, stay curious, and see how far they have come.</p></Reveal><div className="mt-14 grid gap-5 lg:grid-cols-2">{features.map((feature, index) => { const Icon = feature.icon; return <Reveal key={feature.tag} delay={index * 90} className="feature-row group grid min-h-[440px] overflow-hidden rounded-[1.5rem] bg-[#f6f8fb] sm:grid-cols-2"><div className="flex flex-col p-7 sm:p-8"><div className={`grid h-10 w-10 place-items-center rounded-xl ${toneStyles[feature.tone]}`}><Icon className="h-5 w-5" /></div><p className="mt-7 text-[10px] font-bold tracking-[0.15em] text-slate-400">{feature.tag}</p><h3 className="mt-3 text-2xl font-bold leading-[1.03] tracking-[-0.055em] text-slate-900">{feature.title}</h3><p className="mt-4 text-sm leading-6 text-slate-600">{feature.description}</p><a href="#how-it-works" className="mt-auto inline-flex items-center gap-1.5 pt-7 text-sm font-bold text-orange-600 transition group-hover:gap-2.5">Explore feature <ChevronRight className="h-4 w-4" /></a></div><FeatureVisual type={feature.visual} /></Reveal>; })}</div></div></section>
@@ -205,6 +233,8 @@ function App() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/k-12" element={<K12 />} />
+      <Route path="/higher-education" element={<HigherEducation />} />
     </Routes>
   );
 }
