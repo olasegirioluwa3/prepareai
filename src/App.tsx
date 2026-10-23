@@ -1,5 +1,5 @@
 import { FormEvent, ReactNode, useEffect, useState } from "react";
-import { Routes, Route, Link as RouterLink, useLocation } from "react-router-dom";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
 import {
   ArrowRight, Award, BarChart3, Bell, BookOpen, BrainCircuit, Check, ChevronDown,
   ChevronRight, CirclePlay, Coins, Compass, Globe2, GraduationCap, Heart,
@@ -17,9 +17,9 @@ const APP_STORE_URL = "https://play.google.com/store/apps/details?id=ng.com.zion
 type IconComponent = typeof Sparkles;
 
 const navLinks = [
-  ["How it works", "#how-it-works", false], ["K-12", "/k-12", true],
-  ["Higher Education", "/higher-education", true], ["For schools", "#schools", false],
-  ["Partnership", "/partnership", true], ["Curriculums", "#curriculums", false], ["Pricing", "#pricing", false],
+  ["How it works", "#how-it-works"], ["K-12", "/k-12"],
+  ["Higher Education", "/higher-education"], ["For schools", "#schools"],
+  ["Partnership", "/partnership"], ["Curriculums", "#curriculums"], ["Pricing", "#pricing"],
 ];
 
 const features: { icon: IconComponent; tag: string; title: string; description: string; tone: "orange" | "amber" | "emerald" | "slate"; visual: "feed" | "quiz" | "curriculum" | "rewards" }[] = [
@@ -206,7 +206,7 @@ function LandingPage() {
               <li><a href="#footer" className="hover:text-white">Learning journal</a></li>
               <li><a href="mailto:hello@zedprepare.ai" className="hover:text-white">Contact</a></li>
               <li><a href="#schools" className="hover:text-white">For schools</a></li>
-              <li><RouterLink to="/partnership" className="hover:text-white">Partnership</RouterLink></li>
+              <li><a href="/partnership" className="hover:text-white">Partnership</a></li>
             </ul>
           </div>
           <div>
