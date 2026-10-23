@@ -1,5 +1,5 @@
 import { FormEvent, ReactNode, useEffect, useState } from "react";
-import { Routes, Route, Link as RouterLink, useLocation } from "react-router-dom";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
 import {
   ArrowRight, Award, BarChart3, Bell, BookOpen, BrainCircuit, Check, ChevronDown,
   ChevronRight, CirclePlay, Coins, Compass, Globe2, GraduationCap, Heart,
@@ -206,20 +206,20 @@ function LandingPage() {
               <li><a href="#footer" className="hover:text-white">Learning journal</a></li>
               <li><a href="mailto:hello@zedprepare.ai" className="hover:text-white">Contact</a></li>
               <li><a href="#schools" className="hover:text-white">For schools</a></li>
-              <li><a href="/partnership" className="hover:text-white">Partnership</a></li>
+              <li><Link to="/partnership" className="hover:text-white">Partnership</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="text-sm font-bold text-white">Education</h3>
             <ul className="mt-4 space-y-3 text-sm text-orange-100">
-              <li><RouterLink to="/k-12" className="hover:text-white">K-12 Learning</RouterLink></li>
-              <li><RouterLink to="/higher-education" className="hover:text-white">Higher Education</RouterLink></li>
+              <li><Link to="/k-12" className="hover:text-white">K-12 Learning</Link></li>
+              <li><Link to="/higher-education" className="hover:text-white">Higher Education</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="text-sm font-bold text-white">Legal</h3>
             <ul className="mt-4 space-y-3 text-sm text-orange-100">
-              <li><RouterLink to="/privacy" className="hover:text-white">Privacy Policy</RouterLink></li>
+              <li><Link to="/privacy" className="hover:text-white">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>
@@ -227,10 +227,10 @@ function LandingPage() {
           <p className="text-[11px] text-orange-200/70">© 2026 ZED Prepare AI. All rights reserved.</p>
           <div className="flex gap-6 text-[11px] text-orange-200/70">
             <a href="#footer" className="hover:text-white">Terms</a>
-            <RouterLink to="/privacy" className="hover:text-white">Privacy</RouterLink>
-            <RouterLink to="/k-12" className="hover:text-white">K-12</RouterLink>
-            <RouterLink to="/higher-education" className="hover:text-white">Higher Education</RouterLink>
-            <RouterLink to="/partnership" className="hover:text-white">Partnership</RouterLink>
+            <Link to="/privacy" className="hover:text-white">Privacy</Link>
+            <Link to="/k-12" className="hover:text-white">K-12</Link>
+            <Link to="/higher-education" className="hover:text-white">Higher Education</Link>
+            <Link to="/partnership" className="hover:text-white">Partnership</Link>
           </div>
         </div>
       </div>
