@@ -1,5 +1,5 @@
 import { FormEvent, ReactNode, useEffect, useState } from "react";
-import { Routes, Route, Link, useLocation } from "react-router-dom";
+import { Routes, Route, Link as RouterLink, useLocation } from "react-router-dom";
 import {
   ArrowRight, Award, BarChart3, Bell, BookOpen, BrainCircuit, Check, ChevronDown,
   ChevronRight, CirclePlay, Coins, Compass, Globe2, GraduationCap, Heart,
