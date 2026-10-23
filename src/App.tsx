@@ -179,7 +179,7 @@ function LandingPage() {
 
     <footer id="footer" className="bg-[#111827] py-14 text-orange-50 sm:py-16">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]">
           <div>
             <Logo light />
             <p className="mt-5 max-w-xs text-sm leading-6 text-orange-100">Learn smarter. Grow together. Every learner deserves a path that feels made for them—wherever they are learning from.</p>
@@ -210,9 +210,16 @@ function LandingPage() {
             </ul>
           </div>
           <div>
+            <h3 className="text-sm font-bold text-white">Education</h3>
+            <ul className="mt-4 space-y-3 text-sm text-orange-100">
+              <li><RouterLink to="/k-12" className="hover:text-white">K-12 Learning</RouterLink></li>
+              <li><RouterLink to="/higher-education" className="hover:text-white">Higher Education</RouterLink></li>
+            </ul>
+          </div>
+          <div>
             <h3 className="text-sm font-bold text-white">Legal</h3>
             <ul className="mt-4 space-y-3 text-sm text-orange-100">
-              <li><Link to="/privacy" className="hover:text-white">Privacy Policy</Link></li>
+              <li><RouterLink to="/privacy" className="hover:text-white">Privacy Policy</RouterLink></li>
             </ul>
           </div>
         </div>
