@@ -169,7 +169,7 @@ export default function HigherEducation() {
             <div className="grid gap-6 md:grid-cols-2">
               {[
                 "AI-generated practice questions for your specific courses",
-                "Collaborative study groups with students worldwide",
+                "Collaborative study groups with university students worldwide",
                 "Performance analytics to identify knowledge gaps",
                 "Preparation for standardized tests and professional exams",
                 "Verified certifications to enhance your CV",
