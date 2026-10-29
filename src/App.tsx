@@ -1,255 +1,231 @@
-import { FormEvent, ReactNode, useEffect, useState } from "react";
-import { Routes, Route, Link, useLocation } from "react-router-dom";
-import {
-  ArrowRight, Award, BarChart3, Bell, BookOpen, BrainCircuit, Check, ChevronDown,
-  ChevronRight, CirclePlay, Coins, Compass, Globe2, GraduationCap, Heart,
-  Layers3, Menu, MessageCircle, Play, Plus, Search, Send,
-  Sparkles, Star, Target, Trophy, UsersRound, X, Zap,
-} from "lucide-react";
-import { Button, Eyebrow, Logo, LogoMark, Reveal, TextReveal } from "./components/ui";
-import Privacy from "./pages/Privacy";
-import K12 from "./pages/K12";
-import HigherEducation from "./pages/HigherEducation";
-import Partnership from "./pages/Partnership";
+type RGB = [number, number, number];
+interface Glyph { el: HTMLSpanElement; hl: boolean }
+interface Bowl { tip: number; half: number; soft: number }
 
-const APP_STORE_URL = "https://play.google.com/store/apps/details?id=ng.com.zionai.prepareai&hl=en";
-
-type IconComponent = typeof Sparkles;
-
-const navLinks = [
-  ["How it works", "#how-it-works"], ["K-12", "/k-12"],
-  ["Higher Education", "/higher-education"], ["For schools", "#schools"],
-  ["Partnership", "/partnership"], ["Curriculums", "#curriculums"], ["Pricing", "#pricing"],
-];
-
-const features: { icon: IconComponent; tag: string; title: string; description: string; tone: "orange" | "amber" | "emerald" | "slate"; visual: "feed" | "quiz" | "curriculum" | "rewards" }[] = [
-  { icon: Compass, tag: "DISCOVER", title: "Learning is better together.", description: "A thoughtful feed where students exchange study tactics, explain tricky topics, and build healthy learning habits together.", tone: "orange", visual: "feed" },
-  { icon: Zap, tag: "CHALLENGE", title: "Turn practice into a live moment.", description: "Create friendly, real-time quiz challenges that reward effort, curiosity, and the thrill of getting better.", tone: "amber", visual: "quiz" },
-  { icon: Layers3, tag: "PERSONALIZE", title: "Every learner starts in the right place.", description: "Match country, curriculum, grade and subjects in minutes, then surface practice built for the work ahead.", tone: "emerald", visual: "curriculum" },
-  { icon: Award, tag: "GROW", title: "Make academic momentum visible.", description: "Celebrate mastery with skills, certifications, milestones and rewards students are proud to earn.", tone: "slate", visual: "rewards" },
-];
-
-const countrySets: { country: string; code: string; curriculums: string[]; subjects: string[] }[] = [
-  { country: "Nigeria", code: "NG", curriculums: ["WAEC", "NECO"], subjects: ["Mathematics", "Biology", "Civic Education"] },
-  { country: "United Kingdom", code: "GB", curriculums: ["GCSE", "A-Levels"], subjects: ["Mathematics", "Physics", "English Literature"] },
-  { country: "United States", code: "US", curriculums: ["Common Core", "AP"], subjects: ["Algebra", "Biology", "US History"] },
-  { country: "India", code: "IN", curriculums: ["CBSE", "ICSE"], subjects: ["Mathematics", "Science", "Social Science"] },
-  { country: "Canada", code: "CA", curriculums: ["Ontario Curriculum", "British Columbia Curriculum"], subjects: ["Mathematics", "Science", "Geography"] },
-  { country: "Australia", code: "AU", curriculums: ["Australian Curriculum"], subjects: ["Mathematics", "Science", "English"] },
-  { country: "Germany", code: "DE", curriculums: ["Bavarian Curriculum", "Berlin Curriculum"], subjects: ["Mathematics", "Physics", "German"] },
-  { country: "Brazil", code: "BR", curriculums: ["BNCC"], subjects: ["Mathematics", "Physics", "Portuguese"] },
-];
-
-const curriculumDisplayCountries = [
-  ["NG", "Nigeria", "WAEC · NECO"],
-  ["GB", "United Kingdom", "GCSE · A-Levels"],
-  ["US", "United States", "Common Core · AP"],
-  ["IN", "India", "CBSE · ICSE"],
-  ["CA", "Canada", "Ontario · British Columbia"],
-  ["AU", "Australia", "Australian Curriculum"],
-  ["DE", "Germany", "Bavarian · Berlin curricula"],
-  ["BR", "Brazil", "BNCC"],
-];
-
-const faqs = [
-  ["Is ZED Prepare AI free to use?", "Yes. Students can get started with core learning, community, and practice tools for free. Premium adds unlimited practice and deeper personal insights, while schools receive tailored plans."],
-  ["Which curriculums are supported?", "ZED supports 100+ curriculum paths across 50+ countries, including WAEC, GCSE, A-Levels, Common Core, AP, CBSE, ICSE, and more localized options."],
-  ["Can my school use ZED Prepare AI?", "Absolutely. Schools can create a managed learning space, invite students in bulk, monitor class progress, and align content with their own curriculum and assessment goals."],
-  ["How do students get started?", "Students choose their country, curriculum, grade, and subjects. ZED then creates a focused learning space with the right content, practice, and peers to follow."],
-  ["Is student data safe?", "Student privacy is built into the platform with secure authentication, careful privacy controls, and school-friendly account management."],
-  ["Is the app available on iOS and Android?", "ZED Prepare AI is designed for mobile learning and is available on iOS and Android, with progress synced across devices."],
-];
-
-const toneStyles = {
-  orange: "bg-orange-100 text-orange-700",
-  amber: "bg-amber-100 text-amber-700",
-  emerald: "bg-emerald-100 text-emerald-700",
-  slate: "bg-slate-200 text-slate-800",
+const $ = <T extends HTMLElement>(id: string): T => {
+  const el = document.getElementById(id);
+  if (!el) throw new Error(`#${id} not found`);
+  return el as T;
 };
+const clamp = (v: number, a = 0, b = 1): number => Math.max(a, Math.min(b, v));
+const smooth = (x: number): number => { x = clamp(x); return x * x * (3 - 2 * x); };
+const mix = (a: RGB, b: RGB, t: number): RGB => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const hex = (h: string): RGB => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
 
-function FeedVisual() {
-  return <div className="visual-window min-h-[300px] overflow-hidden bg-[linear-gradient(140deg,#fff7ed,white_55%,#f8fafc)] p-4 sm:p-5"><div className="mb-5 flex items-center justify-between"><div className="flex items-center gap-2 text-sm font-bold text-slate-900"><Compass className="h-4 w-4 text-orange-600" /> Discover</div><Search className="h-4 w-4 text-slate-400" /></div><div className="space-y-3"><div className="rounded-2xl bg-white p-3 shadow-[0_12px_30px_-18px_rgba(15,23,42,0.35)]"><div className="flex items-center gap-2"><div className="grid h-7 w-7 place-items-center rounded-full bg-orange-100 text-[9px] font-bold text-orange-700">AN</div><div><p className="text-[10px] font-bold text-slate-800">Amara N.</p><p className="text-[8px] text-slate-400">Biology revision</p></div></div><p className="mt-2 text-[10px] leading-4 text-slate-600">My favorite way to remember cell division is...</p><div className="mt-2 flex items-center gap-3 text-[9px] text-slate-400"><span className="flex items-center gap-1"><Heart className="h-3 w-3 fill-rose-400 text-rose-400" /> 238</span><span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" /> 42</span></div></div><div className="ml-7 rounded-2xl bg-orange-500 p-3 text-white shadow-[0_16px_35px_-18px_rgba(249,115,22,0.7)]"><p className="text-[9px] font-semibold text-orange-100">QUIZ SPOTLIGHT</p><p className="mt-1 text-xs font-bold">Can you get 10/10 in algebra?</p><div className="mt-2 flex items-center justify-between"><div className="flex -space-x-1.5"><span className="h-4 w-4 rounded-full border border-orange-500 bg-amber-200" /><span className="h-4 w-4 rounded-full border border-orange-500 bg-emerald-200" /><span className="h-4 w-4 rounded-full border border-orange-500 bg-sky-200" /></div><span className="text-[9px] font-medium">Join in</span></div></div></div></div>;
+/* ---------- Brand colours ---------- */
+const BRAND = '#ff6a1a';
+const NAVY = '#0b1d3a';
+const REVEAL = '#ff7a2f';
+const PANEL_GHOST = '#8f7a68';
+const PANEL_ACCENT = '#ffc994';
+
+/* ---------- Letter reveal ---------- */
+function splitText(root: HTMLElement): Glyph[] {
+  const out: Glyph[] = [];
+  const walk = (node: Node, hl: boolean): void => {
+    Array.from(node.childNodes).forEach((c) => {
+      if (c.nodeType === Node.TEXT_NODE) {
+        const frag = document.createDocumentFragment();
+        (c.textContent ?? '').split(/(\s+)/).forEach((w) => {
+          if (!w) return;
+          if (/^\s+$/.test(w)) { frag.appendChild(document.createTextNode(w)); return; }
+          const word = document.createElement('span');
+          word.style.cssText = 'display:inline-block;white-space:nowrap';
+          w.split('').forEach((ch) => {
+            const s = document.createElement('span');
+            s.textContent = ch;
+            word.appendChild(s);
+            out.push({ el: s, hl });
+          });
+          frag.appendChild(word);
+        });
+        c.parentNode?.replaceChild(frag, c);
+      } else if (c.nodeName !== 'BR') {
+        walk(c, hl || (c as HTMLElement).classList.contains('hl'));
+      }
+    });
+  };
+  walk(root, false);
+  return out;
 }
 
-function QuizVisual() {
-  return <div className="visual-window relative min-h-[300px] overflow-hidden bg-[#111827] p-4 text-white sm:p-5"><div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-orange-500/30 blur-2xl" /><div className="relative flex items-center justify-between text-[10px] font-medium text-orange-100"><span>LIVE BATTLE</span><span className="rounded-full bg-rose-500/20 px-2 py-1 text-rose-300">01:24</span></div><div className="relative mt-6 flex items-center justify-between"><div className="text-center"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-amber-300 text-xs font-bold text-amber-950">MK</div><p className="mt-1.5 text-[9px] text-orange-100">Maya</p></div><div className="text-center"><p className="text-2xl font-black tracking-tighter">70 <span className="text-sm text-orange-300">:</span> 60</p><p className="text-[9px] font-medium text-emerald-300">ROUND 4 OF 10</p></div><div className="text-center"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-sky-300 text-xs font-bold text-sky-950">TJ</div><p className="mt-1.5 text-[9px] text-orange-100">Theo</p></div></div><div className="relative mt-5 rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur"><p className="text-[10px] leading-4 text-orange-50">What is the value of x in 4x - 8 = 20?</p><div className="mt-3 grid grid-cols-2 gap-2"><span className="rounded-lg bg-white/10 px-2 py-1.5 text-center text-[10px]">5</span><span className="rounded-lg bg-emerald-400 px-2 py-1.5 text-center text-[10px] font-bold text-emerald-950">7</span></div></div><div className="relative mt-3 flex items-center gap-2 rounded-xl bg-white/5 p-2 text-[9px] text-orange-200"><MessageCircle className="h-3.5 w-3.5 text-amber-300" /><span>Go Maya!</span><span className="ml-auto">+12 cheering</span></div></div>;
+function paint(chars: Glyph[], p: number, spread: number, fin: string, acc: string, ghost: string): void {
+  const n = chars.length, F = hex(fin), A = hex(acc), G = hex(ghost), H = hex(BRAND);
+  chars.forEach((o, i) => {
+    const t = clamp((p * (1 + spread) - i / n) / spread);
+    const f = o.hl ? H : F;
+    let op: number, c: RGB, b: number;
+    if (t < 0.35) { op = t / 0.35; c = G; b = 8 - 6.5 * (t / 0.35); }
+    else if (t < 0.7) { op = 1; c = mix(G, A, (t - 0.35) / 0.35); b = 1.5 * (1 - (t - 0.35) / 0.35); }
+    else { op = 1; c = mix(A, f, (t - 0.7) / 0.3); b = 0; }
+    o.el.style.opacity = String(op);
+    o.el.style.color = `rgb(${c.map(Math.round).join(',')})`;
+    o.el.style.filter = b > 0.05 ? `blur(${b.toFixed(2)}px)` : 'none';
+  });
 }
 
-function CurriculumVisual() {
-  const [countryIndex, setCountryIndex] = useState(0);
-  const active = countrySets[countryIndex];
-  const curriculum = active.curriculums[0];
-  const subject = active.subjects[0];
-  const rows: [string, ReactNode, string][] = [
-    ["Country", active.country, active.code],
-    ["Curriculum", curriculum, ""],
-    ["Your focus", subject, ""],
-  ];
-  return <div className="visual-window min-h-[300px] bg-[linear-gradient(135deg,#ecfdf5_0%,#f8fafc_55%,#fff7ed_100%)] p-4 sm:p-5"><div className="flex items-center gap-2"><div className="grid h-7 w-7 place-items-center rounded-lg bg-emerald-500 text-white"><Globe2 className="h-4 w-4" /></div><div><p className="text-[10px] font-bold text-slate-900">Build your study path</p><p className="text-[8px] text-slate-400">Tailored in less than a minute</p></div></div><div className="mt-5 space-y-2.5">{rows.map(([label, value, flag]) => <div key={label} className="flex items-center rounded-xl bg-white px-3 py-2.5 shadow-[0_8px_18px_-14px_rgba(15,23,42,0.35)]"><span className="w-[72px] text-[9px] font-medium text-slate-400">{label}</span><span className="flex-1 text-[10px] font-semibold text-slate-700">{flag && <span className="mr-1.5 inline-grid h-4 w-4 place-items-center rounded bg-orange-100 text-[7px] font-bold text-orange-700">{flag}</span>}{value}</span><ChevronDown className="h-3.5 w-3.5 text-slate-400" /></div>)}</div><div className="mt-5"><p className="text-[8px] font-bold tracking-[.14em] text-slate-400">CHOOSE YOUR COUNTRY</p><div className="mt-2 flex gap-1.5 overflow-hidden">{countrySets.map((country, index) => <button key={country.code} onClick={() => setCountryIndex(index)} aria-label={`Select ${country.country}`} aria-pressed={index === countryIndex} className={`grid h-7 w-7 shrink-0 place-items-center rounded-md text-[8px] font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 ${index === countryIndex ? "bg-orange-500 text-white shadow-md shadow-orange-500/30" : "bg-white text-slate-500 hover:bg-orange-50 hover:text-orange-700"}`}>{country.code}</button>)}</div></div><div className="mt-4 flex items-center gap-2 rounded-xl bg-emerald-500 px-3 py-2.5 text-[10px] font-bold text-white"><Sparkles className="h-3.5 w-3.5" /> Your personalized plan is ready <Check className="ml-auto h-3.5 w-3.5" /></div></div>;
-}
+const h1 = splitText($('h1'));
+const stmtChars = splitText($('stmt'));
+const h2 = splitText($('h2'));
+paint(h1, 0, 0.35, NAVY, REVEAL, '#ffffff');
+paint(stmtChars, 0, 0.16, NAVY, REVEAL, '#ffffff');
+paint(h2, 0, 0.35, '#ffffff', PANEL_ACCENT, PANEL_GHOST);
 
-function RewardsVisual() {
-  return <div className="visual-window relative min-h-[300px] overflow-hidden bg-[radial-gradient(circle_at_75%_20%,#ffedd5_0,transparent_26%),linear-gradient(145deg,#f8fafc,#ffffff)] p-4 sm:p-5"><div className="flex items-center justify-between"><div><p className="text-[10px] font-bold text-slate-900">Your growth</p><p className="mt-0.5 text-[9px] text-slate-400">You are on a roll</p></div><div className="flex items-center gap-1 rounded-full bg-amber-100 px-2 py-1 text-[9px] font-bold text-amber-700"><Coins className="h-3 w-3" /> 2,450</div></div><div className="mt-4 grid grid-cols-3 gap-2"><div className="grid aspect-square place-items-center rounded-2xl bg-orange-500 text-center text-white"><Trophy className="h-5 w-5 text-amber-200" /><span className="-mt-3 text-[8px] font-bold">Quiz Ace</span></div><div className="grid aspect-square place-items-center rounded-2xl bg-emerald-100 text-center text-emerald-700"><Zap className="h-5 w-5" /><span className="-mt-3 text-[8px] font-bold">7 day streak</span></div><div className="grid aspect-square place-items-center rounded-2xl bg-slate-200 text-center text-slate-800"><BrainCircuit className="h-5 w-5" /><span className="-mt-3 text-[8px] font-bold">Top 10%</span></div></div><div className="mt-4 rounded-xl bg-white p-3 shadow-[0_12px_26px_-18px_rgba(15,23,42,0.38)]"><div className="flex justify-between text-[9px] font-semibold text-slate-600"><span>Weekly learning goal</span><span className="text-emerald-600">82%</span></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full w-[82%] rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500" /></div></div><span className="float-badge absolute bottom-5 right-5 grid h-10 w-10 place-items-center rounded-2xl bg-amber-300 text-amber-900 shadow-lg"><Star className="h-5 w-5 fill-current" /></span></div>;
-}
+/* ---------- Bowl glow ---------- */
+const KEYS = {
+  q:    [0, .03, .08, .18, .40, .66, .87, 1.15, 1.43, 1.8],
+  tip:  [.30, .45, .65, .80, .95, 1.05, 1.05, 1.10, 1.30, 2.40],
+  half: [.34, .38, .38, .38, .38, .46, .66, .90, 1.60, 3.00],
+  soft: [.22, .26, .22, .22, .19, .16, .13, .10, .10, .10],
+} as const;
 
-function FeatureVisual({ type }: { type: (typeof features)[number]["visual"] }) {
-  if (type === "feed") return <FeedVisual />;
-  if (type === "quiz") return <QuizVisual />;
-  if (type === "curriculum") return <CurriculumVisual />;
-  return <RewardsVisual />;
-}
-
-function PhoneMockup() {
-  return <div className="hero-phone relative mx-auto w-[234px] rounded-[2.55rem] border-[7px] border-slate-900 bg-slate-950 p-1.5 shadow-[0_35px_70px_-24px_rgba(1,6,37,0.75)] sm:w-[266px]"><div className="absolute left-1/2 top-0 z-10 h-5 w-24 -translate-x-1/2 rounded-b-2xl bg-slate-900 sm:w-28" /><div className="overflow-hidden rounded-[2.05rem] bg-[#fffaf5] px-3 pb-3 pt-7 sm:rounded-[2.2rem] sm:px-4 sm:pb-4 sm:pt-8"><div className="flex items-center justify-between"><div className="flex items-center gap-1.5"><LogoMark className="h-4 w-4" /><span className="text-[8px] font-black tracking-[0.13em] text-orange-600">ZED PREPARE</span></div><Bell className="h-3.5 w-3.5 text-slate-500" /></div><div className="mt-5 flex items-center justify-between"><div><p className="text-[8px] text-slate-500">Good morning, Jordan</p><h3 className="mt-0.5 text-[17px] font-bold tracking-[-0.06em] text-slate-900">Ready to learn?</h3></div><div className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-amber-200 to-orange-300 text-[8px] font-bold text-orange-900">JL</div></div><div className="mt-4 rounded-2xl bg-orange-500 p-3.5 text-white"><div className="flex items-center justify-between text-[8px] font-medium text-orange-100"><span>CONTINUE LEARNING</span><span>3 / 8</span></div><p className="mt-2 text-[13px] font-bold leading-4">Algebra: equations and expressions</p><div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/20"><div className="h-full w-[58%] rounded-full bg-emerald-300" /></div><div className="mt-3 flex items-center justify-between"><span className="text-[8px] text-orange-100">15 min lesson</span><span className="grid h-5 w-5 place-items-center rounded-full bg-white text-orange-600"><Play className="h-2.5 w-2.5 fill-current" /></span></div></div><div className="mt-4 flex items-center justify-between"><p className="text-[10px] font-bold text-slate-900">For you</p><p className="text-[8px] font-semibold text-orange-600">See all</p></div><div className="mt-2.5 flex gap-2"><div className="w-1/2 rounded-xl bg-emerald-50 p-2.5"><BrainCircuit className="h-4 w-4 text-emerald-600" /><p className="mt-2 text-[8px] font-bold text-slate-800">Daily quiz</p><p className="mt-0.5 text-[7px] text-slate-400">Earn 40 XP</p></div><div className="w-1/2 rounded-xl bg-amber-50 p-2.5"><Trophy className="h-4 w-4 text-amber-500" /><p className="mt-2 text-[8px] font-bold text-slate-800">Live battle</p><p className="mt-0.5 text-[7px] text-slate-400">4 friends online</p></div></div><div className="mt-4 flex justify-around border-t border-slate-200 pt-2.5 text-slate-400"><Compass className="h-3.5 w-3.5 text-orange-600" /><BookOpen className="h-3.5 w-3.5" /><Trophy className="h-3.5 w-3.5" /><div className="grid h-3.5 w-3.5 place-items-center rounded-full bg-orange-100 text-[5px] font-bold text-orange-600">JL</div></div></div></div>;
-}
-
-function LandingPage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [openFaq, setOpenFaq] = useState(0);
-  const [showDemo, setShowDemo] = useState(false);
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add("is-visible")), { threshold: 0.12 });
-    document.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
-  }, []);
-
-  function handleNewsletter(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!email.trim()) return;
-    setSubmitted(true);
-    setEmail("");
+function lerpKey(arr: readonly number[], q: number): number {
+  const Q = KEYS.q;
+  if (q <= Q[0]) return arr[0];
+  for (let i = 1; i < Q.length; i++) {
+    if (q <= Q[i]) return arr[i - 1] + (arr[i] - arr[i - 1]) * (q - Q[i - 1]) / (Q[i] - Q[i - 1]);
   }
-
-  return <div id="top" className="min-h-screen overflow-x-hidden bg-[#f6f8fb] text-slate-900 selection:bg-orange-200 selection:text-orange-950">
-    <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-[#f6f8fb]/80 backdrop-blur-xl"><div className="mx-auto flex h-[70px] max-w-7xl items-center justify-between px-5 lg:px-8"><Logo /><nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">{navLinks.map(([label, href]) => href.startsWith("/") ? <Link key={href} className="text-sm font-medium text-slate-600 transition hover:text-orange-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500" to={href}>{label}</Link> : <a key={href} className="text-sm font-medium text-slate-600 transition hover:text-orange-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500" href={href}>{label}</a>)}</nav><div className="hidden items-center gap-4 lg:flex"><a href="#footer" className="text-sm font-semibold text-slate-700 transition hover:text-orange-600">Sign in</a><Button href={APP_STORE_URL} className="px-4 py-2.5">Start free</Button></div><button onClick={() => setMenuOpen(!menuOpen)} className="grid h-10 w-10 place-items-center rounded-xl text-slate-700 hover:bg-slate-200/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 lg:hidden" aria-label="Toggle navigation" aria-expanded={menuOpen}>{menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button></div>{menuOpen && <div className="border-t border-slate-200 bg-white px-5 py-5 shadow-xl lg:hidden"><nav className="flex flex-col gap-1" aria-label="Mobile navigation">{navLinks.map(([label, href]) => href.startsWith("/") ? <Link key={href} onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-700" to={href}>{label}</Link> : <a key={href} onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-700" href={href}>{label}</a>)}<Button href={APP_STORE_URL} className="mt-3" onClick={() => setMenuOpen(false)}>Start free</Button></nav></div>}</header>
-
-    <main>
-      <section className="relative isolate overflow-hidden bg-[#111827] pb-14 pt-14 text-white sm:pb-20 sm:pt-20 lg:min-h-[760px] lg:pb-0 lg:pt-24"><div className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_at_50%_-15%,#ea580c_0%,#334155_38%,#111827_72%)]" /><div className="grid-pattern absolute inset-0 -z-10 opacity-30" /><div className="orb orb-one absolute -left-20 top-32 -z-10 h-72 w-72 rounded-full bg-orange-500/25 blur-3xl" /><div className="orb orb-two absolute right-0 top-10 -z-10 h-80 w-80 rounded-full bg-amber-300/20 blur-3xl" /><div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-12 lg:px-8"><div className="relative z-10 max-w-2xl pt-4 text-center lg:pt-0 lg:text-left"><Reveal><div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-semibold tracking-wide text-orange-100 backdrop-blur"><Sparkles className="h-3.5 w-3.5 text-amber-300" /> The global learning network for schools</div></Reveal><Reveal delay={80}><div className="flex items-center justify-center gap-4 lg:justify-start"><LogoMark className="h-20 w-20 sm:h-24 sm:w-24" /><p className="text-left font-display text-[clamp(2.5rem,6vw,5.25rem)] font-black leading-[0.86] tracking-[-0.085em]">ZED<br /><span className="text-gradient-hero">Prepare AI</span></p></div></Reveal><Reveal delay={150}><h1 className="mt-7 max-w-xl text-[clamp(1.7rem,3vw,2.6rem)] font-bold leading-[1.05] tracking-[-0.06em] text-white">Education built for every student, curriculum, and country worldwide.</h1></Reveal><Reveal delay={220}><p className="mx-auto mt-5 max-w-lg text-base leading-7 text-orange-50 sm:text-lg lg:mx-0">ZED Prepare AI is the global learning network connecting K-12 and higher education students everywhere with intelligent practice tailored to their local country and curriculum.</p></Reveal><Reveal delay={300} className="mt-8 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"><Button href={APP_STORE_URL} variant="inverse" className="px-6 py-3.5" showDot>Get the Android app</Button><button onClick={() => setShowDemo(true)} className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"><span className="grid h-5 w-5 place-items-center rounded-full bg-white text-orange-600"><Play className="ml-0.5 h-2.5 w-2.5 fill-current" /></span> Watch the story</button></Reveal><Reveal delay={380}><div className="mt-10 flex flex-wrap justify-center gap-x-5 gap-y-3 text-[11px] font-medium text-orange-100 lg:justify-start"><span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-amber-300" /> No credit card needed</span><span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-amber-300" /> Built for schools worldwide</span></div></Reveal></div><Reveal delay={260} className="relative mx-auto w-full max-w-[500px] lg:translate-y-10"><div className="absolute left-0 top-[21%] h-32 w-32 rounded-full border border-white/15 bg-white/[0.06] blur-[1px]" /><div className="absolute -right-3 top-[17%] hidden w-40 rounded-2xl border border-white/15 bg-white/10 p-3.5 text-left shadow-2xl backdrop-blur md:block"><div className="flex items-center gap-2"><span className="grid h-7 w-7 place-items-center rounded-lg bg-amber-300 text-amber-950"><Trophy className="h-4 w-4" /></span><span className="text-[10px] font-bold">Personal best!</span></div><p className="mt-2 text-[9px] leading-3 text-orange-50">You passed your goal in Algebra.</p></div><div className="absolute -left-3 bottom-[21%] hidden w-36 rounded-2xl border border-white/15 bg-white/10 p-3.5 text-left shadow-2xl backdrop-blur md:block"><div className="flex -space-x-2"><span className="grid h-6 w-6 place-items-center rounded-full border-2 border-[#475569] bg-amber-200 text-[7px] font-bold text-amber-900">AK</span><span className="grid h-6 w-6 place-items-center rounded-full border-2 border-[#475569] bg-sky-200 text-[7px] font-bold text-sky-900">TM</span><span className="grid h-6 w-6 place-items-center rounded-full border-2 border-[#475569] bg-emerald-200 text-[7px] font-bold text-emerald-900">JP</span></div><p className="mt-2 text-[9px] font-semibold text-white">24 learners online</p></div><PhoneMockup /><div className="absolute bottom-2 right-[2%] -z-10 h-48 w-48 rounded-full bg-orange-400/30 blur-3xl" /></Reveal></div></section>
-
-      <section className="border-b border-slate-200 bg-white py-8 sm:py-10"><div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-5 sm:flex-row sm:px-8"><p className="text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400 sm:text-left">Chosen by forward-thinking learners and schools around the world</p><div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-base font-bold tracking-[-0.05em] text-slate-400 sm:gap-x-9"><span>Westbridge</span><span>ACADEMIA</span><span>Northstar</span><span>ONE SCHOOL</span></div></div></section>
-
-      <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
-        <div className="grid gap-6 md:grid-cols-2">
-          <Link to="/k-12" className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-500 to-orange-600 p-10 text-white shadow-lg transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl">
-            <div className="relative z-10">
-              <GraduationCap className="h-14 w-14 mb-5 opacity-90" />
-              <h2 className="text-4xl font-bold tracking-tight">K-12 Learning</h2>
-              <p className="mt-4 text-lg leading-relaxed text-orange-100">Empowering students from kindergarten through 12th grade with curriculum-aligned practice and intelligent study tools.</p>
-              <div className="mt-8 inline-flex items-center gap-2 font-semibold text-white transition-all duration-300 group-hover:gap-3">
-                Explore K-12 <ArrowRight className="h-5 w-5" />
-              </div>
-            </div>
-          </Link>
-          <Link to="/higher-education" className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-10 text-white shadow-lg transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl">
-            <div className="relative z-10">
-              <BookOpen className="h-14 w-14 mb-5 opacity-90" />
-              <h2 className="text-4xl font-bold tracking-tight">Higher Education</h2>
-              <p className="mt-4 text-lg leading-relaxed text-slate-300">Advanced learning tools for university students, college preparation, and professional development.</p>
-              <div className="mt-8 inline-flex items-center gap-2 font-semibold text-white transition-all duration-300 group-hover:gap-3">
-                Explore Higher Ed <ArrowRight className="h-5 w-5" />
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-32"><div className="grid gap-16 lg:grid-cols-[.9fr_1.1fr] lg:items-end"><Reveal><Eyebrow>ONE PLATFORM, REAL MOMENTUM</Eyebrow><h2 className="max-w-xl text-4xl font-bold leading-[.98] tracking-[-0.065em] text-slate-950 sm:text-5xl">Learn with your curriculum, not against it.</h2></Reveal><Reveal delay={120}><p className="max-w-xl text-base leading-7 text-slate-600 sm:text-lg">ZED gives students a shared space to prepare, practise, and feel proud of the work they are putting in. For schools, it makes everyday learning more visible, motivating, and connected.</p></Reveal></div><div className="mt-16 grid gap-x-10 gap-y-12 md:grid-cols-3">{[["The gap", "Great study tools too often ignore local standards and leave learners working alone.", Globe2, "01"], ["The shift", "ZED meets students in their curriculum, then adds a global community that makes preparation stick.", Sparkles, "02"], ["The result", "More consistent practice, stronger confidence, and a clearer path from today's lesson to tomorrow's opportunity.", Target, "03"]].map(([label, text, Icon, number], index) => { const IconElement = Icon as IconComponent; return <Reveal key={label as string} delay={index * 100} className="group border-t border-slate-200 pt-6"><div className="flex items-center justify-between"><span className="text-[11px] font-bold tracking-[0.14em] text-orange-600">{label as string}</span><span className="text-[11px] font-bold text-slate-300">{number as string}</span></div><IconElement className="mt-10 h-8 w-8 text-slate-900 transition duration-300 group-hover:-translate-y-1 group-hover:text-orange-600" /><p className="mt-6 max-w-sm text-base leading-7 text-slate-600">{text as string}</p></Reveal>; })}</div></section>
-
-      <section id="features" className="bg-white py-24 sm:py-32"><div className="mx-auto max-w-7xl px-5 sm:px-8"><Reveal className="mx-auto max-w-2xl text-center"><Eyebrow>THE ZED EXPERIENCE</Eyebrow><h2 className="text-4xl font-bold leading-[.98] tracking-[-0.065em] text-slate-950 sm:text-5xl">Where serious learning feels more alive.</h2><p className="mt-6 text-base leading-7 text-slate-600">A complete learning loop designed to help every student show up, stay curious, and see how far they have come.</p></Reveal><div className="mt-16 grid gap-6 lg:grid-cols-2">{features.map((feature, index) => { const Icon = feature.icon; return <Reveal key={feature.tag} delay={index * 90} className="feature-row group grid min-h-[440px] overflow-hidden rounded-[1.5rem] bg-[#f6f8fb] sm:grid-cols-2"><div className="flex flex-col p-8 sm:p-10"><div className={`grid h-10 w-10 place-items-center rounded-xl ${toneStyles[feature.tone]}`}><Icon className="h-5 w-5" /></div><p className="mt-8 text-[10px] font-bold tracking-[0.15em] text-slate-400">{feature.tag}</p><h3 className="mt-4 text-2xl font-bold leading-[1.03] tracking-[-0.055em] text-slate-900">{feature.title}</h3><p className="mt-4 text-sm leading-6 text-slate-600">{feature.description}</p><a href="#how-it-works" className="mt-auto inline-flex items-center gap-1.5 pt-8 text-sm font-bold text-orange-600 transition group-hover:gap-2.5">Explore feature <ChevronRight className="h-4 w-4" /></a></div><FeatureVisual type={feature.visual} /></Reveal>; })}</div></div></section>
-
-      <section id="schools" className="relative overflow-hidden bg-[#fff7ed] py-24 sm:py-32"><div className="absolute right-[-8%] top-[10%] h-80 w-80 rounded-full bg-orange-300/25 blur-3xl" /><div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[.88fr_1.12fr] lg:items-center"><Reveal><Eyebrow>BUILT FOR SCHOOL COMMUNITIES</Eyebrow><h2 className="max-w-lg text-4xl font-bold leading-[.98] tracking-[-0.065em] text-slate-950 sm:text-5xl">One space that brings the whole school forward.</h2><p className="mt-6 max-w-lg text-base leading-7 text-slate-600">Wherever your school is located, ZED adapts to your local curriculum and classroom rhythm. Teachers get clearer progress insights, and students get a better reason to practise together.</p><div className="mt-10 space-y-5">{[["See the signal, not just the score", "Topic-level insights highlight who needs a nudge and what to revisit."], ["Build a culture of healthy challenge", "Create private school spaces where students can compete, collaborate, and celebrate."], ["Make every practice session count", "Assign curriculum-aligned quizzes in moments and watch confidence build over time."]].map(([title, text]) => <div className="flex gap-3" key={title}><span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-emerald-500 text-white"><Check className="h-3.5 w-3.5" /></span><div><h3 className="text-sm font-bold text-slate-900">{title}</h3><p className="mt-1 text-sm leading-5 text-slate-600">{text}</p></div></div>)}</div><Button href={APP_STORE_URL} className="mt-10">Bring ZED to your school</Button></Reveal><Reveal delay={150} className="relative mx-auto w-full max-w-[620px]"><div className="relative overflow-hidden rounded-[2rem] border border-white/80 bg-white/80 p-4 shadow-[0_30px_70px_-28px_rgba(154,52,18,.38)] backdrop-blur sm:p-6"><div className="flex items-center justify-between border-b border-slate-100 pb-4"><div className="flex items-center gap-2"><LogoMark className="h-8 w-8 rounded-[9px]" /><div><p className="text-[10px] font-bold text-slate-900">Westbridge Academy</p><p className="text-[8px] text-slate-400">Teacher workspace</p></div></div><button className="rounded-lg bg-slate-100 px-2.5 py-1.5 text-[9px] font-semibold text-slate-600">This week</button></div><div className="mt-5 grid gap-3 sm:grid-cols-[1.1fr_.9fr]"><div className="rounded-2xl bg-[#111827] p-4 text-white"><p className="text-[9px] font-medium tracking-[.12em] text-orange-200">CLASS MASTERY</p><p className="mt-3 text-3xl font-bold tracking-[-.07em]">76<span className="text-base text-orange-300">%</span></p><p className="mt-1 text-[9px] text-orange-200">Up 12% from last week</p><div className="mt-5 flex h-16 items-end gap-1.5">{[35, 52, 44, 65, 58, 85, 76].map((height, i) => <span key={i} style={{ height: `${height}%` }} className={`w-full rounded-t-sm ${i === 5 ? "bg-emerald-300" : "bg-orange-400"}`} />)}</div></div><div className="rounded-2xl bg-amber-50 p-4"><div className="flex items-center justify-between"><p className="text-[9px] font-bold text-amber-800">TODAY'S WINS</p><Trophy className="h-4 w-4 text-amber-500" /></div><p className="mt-4 text-2xl font-bold tracking-[-.07em] text-slate-900">248</p><p className="mt-1 text-[9px] text-slate-500">questions mastered</p><div className="mt-4 flex -space-x-2">{["AR", "ND", "PM", "TS"].map((initials, i) => <span key={initials} className={`grid h-6 w-6 place-items-center rounded-full border-2 border-amber-50 text-[7px] font-bold ${["bg-orange-200 text-orange-800", "bg-emerald-200 text-emerald-700", "bg-rose-200 text-rose-700", "bg-sky-200 text-sky-700"][i]}`}>{initials}</span>)}</div></div></div><div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 p-3"><div className="flex items-center justify-between text-[9px]"><div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-500" /><span className="font-semibold text-slate-700">Mathematics - Algebraic reasoning</span></div><span className="font-bold text-emerald-600">84% mastery</span></div><div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200"><div className="h-full w-[84%] rounded-full bg-emerald-500" /></div></div></div><div className="absolute -bottom-5 -right-3 hidden rounded-2xl border border-white/70 bg-white p-3 shadow-xl sm:block"><div className="flex items-center gap-2"><span className="grid h-7 w-7 place-items-center rounded-full bg-emerald-100 text-emerald-600"><Zap className="h-3.5 w-3.5" /></span><span className="text-[9px] font-bold text-slate-700">18 day class streak</span></div></div></Reveal></div></section>
-
-      <section id="how-it-works" className="mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-32"><Reveal className="max-w-xl"><Eyebrow>FROM FIRST SIGN-IN TO REAL PROGRESS</Eyebrow><h2 className="text-4xl font-bold leading-[.98] tracking-[-0.065em] text-slate-950 sm:text-5xl">A smarter routine starts with four simple moves.</h2></Reveal><div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{[["01", "Set your learning profile", "Choose a country, curriculum, grade, and goals. ZED gets the context before it makes a recommendation.", Globe2], ["02", "Choose your focus", "Select subjects and topics that matter right now, from core classes to exam preparation.", BookOpen], ["03", "Practise in your rhythm", "Build knowledge with targeted lessons or turn up the energy in live quiz challenges.", CirclePlay], ["04", "See your progress grow", "Track strengths, celebrate streaks, and know exactly where your next gain will come from.", BarChart3]].map(([number, title, description, Icon], index) => { const IconElement = Icon as IconComponent; return <Reveal key={number as string} delay={index * 80} className="relative border-t border-slate-200 pt-5"><span className="text-[11px] font-bold tracking-[.12em] text-orange-600">{number as string}</span><div className="mt-8 grid h-11 w-11 place-items-center rounded-2xl bg-slate-100 text-slate-800"><IconElement className="h-5 w-5" /></div><h3 className="mt-6 text-lg font-bold tracking-[-.03em] text-slate-900">{title as string}</h3><p className="mt-3 text-sm leading-6 text-slate-600">{description as string}</p>{index < 3 && <ArrowRight className="absolute -right-3 top-6 hidden h-4 w-4 text-slate-300 lg:block" />}</Reveal>; })}</div></section>
-
-      <section id="curriculums" className="bg-[#111827] py-24 text-white sm:py-32"><div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[.86fr_1.14fr] lg:items-center"><Reveal><Eyebrow className="text-amber-300">LOCAL RELEVANCE, GLOBAL POSSIBILITY</Eyebrow><h2 className="max-w-lg text-4xl font-bold leading-[.98] tracking-[-0.065em] sm:text-5xl">Built for every country. Centered on every learner.</h2><p className="mt-6 max-w-md text-base leading-7 text-orange-50">Meet students wherever they are learning, with the standards, subjects, and milestones that define success in their own school and country.</p><div className="mt-10 flex gap-8"><div><p className="text-3xl font-bold tracking-[-.07em] text-amber-300">50+</p><p className="mt-1 text-[11px] font-medium text-orange-100">countries supported</p></div><div className="border-l border-white/15 pl-8"><p className="text-3xl font-bold tracking-[-.07em] text-amber-300">100+</p><p className="mt-1 text-[11px] font-medium text-orange-100">curriculum pathways</p></div></div></Reveal><Reveal delay={120}><div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[.06] p-4 backdrop-blur sm:p-6"><div className="world-map absolute inset-0 opacity-60" /><div className="relative grid gap-2 sm:grid-cols-2">{curriculumDisplayCountries.map(([code, country, curriculum], i) => <div key={code} className="group flex items-center gap-3 rounded-xl border border-white/[.08] bg-[#1f2937]/75 p-3 transition duration-300 hover:-translate-y-0.5 hover:border-amber-300/40 hover:bg-[#334155]"><span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg text-[9px] font-bold ${i % 3 === 0 ? "bg-amber-300 text-amber-950" : i % 3 === 1 ? "bg-orange-300 text-orange-950" : "bg-emerald-300 text-emerald-950"}`}>{code}</span><span><p className="text-[11px] font-bold text-white">{country}</p><p className="mt-0.5 text-[9px] text-orange-100">{curriculum}</p></span></div>)}</div><p className="relative mt-5 text-center text-[11px] text-orange-100">And 40+ more countries with localized learning support.</p></div></Reveal></div></section>
-
-      <section className="border-b border-slate-200 bg-white py-20 sm:py-24"><div className="mx-auto max-w-7xl px-5 sm:px-8"><div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">{[["50+", "Countries supported", Globe2], ["1M+", "Quizzes completed", BrainCircuit], ["500K+", "Active students", UsersRound], ["100+", "Curriculums available", BookOpen]].map(([value, label, Icon], index) => { const IconElement = Icon as IconComponent; return <Reveal key={label as string} delay={index * 70} className="flex items-center gap-4"><span className="grid h-11 w-11 place-items-center rounded-xl bg-orange-50 text-orange-600"><IconElement className="h-5 w-5" /></span><div><p className="text-3xl font-bold tracking-[-.07em] text-slate-950">{value as string}</p><p className="mt-0.5 text-sm text-slate-500">{label as string}</p></div></Reveal>; })}</div></div></section>
-
-      <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-32"><Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end"><div><Eyebrow>STORIES OF MOMENTUM</Eyebrow><h2 className="max-w-lg text-4xl font-bold leading-[.98] tracking-[-0.065em] text-slate-950 sm:text-5xl">Learners feel the difference.</h2></div><div className="flex gap-1 text-amber-400" aria-label="Five star average rating">{Array.from({ length: 5 }, (_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}<span className="ml-2 text-sm font-semibold text-slate-500">4.8 average</span></div></Reveal><div className="mt-16 grid gap-6 lg:grid-cols-3">{[["ZED helped me turn WAEC revision into something I actually looked forward to. The questions felt made for what I needed to learn.", "Sarah M.", "Senior student, Nigeria", "SM", "from-amber-100 to-orange-100 text-amber-800"], ["The challenge mode brought energy back into our revision sessions. My class now asks for a quiz battle before the lesson ends.", "Mr. Daniel K.", "Science teacher, United Kingdom", "DK", "from-orange-100 to-slate-100 text-orange-800"], ["I love seeing exactly where I am improving. My streak and topic score make it easy to keep showing up every day.", "Priya S.", "University student, India", "PS", "from-emerald-100 to-teal-100 text-emerald-800"]].map(([quote, name, role, initials, avatar], index) => <Reveal key={name} delay={index * 90} className="flex min-h-[280px] flex-col rounded-[1.5rem] bg-white p-7 shadow-[0_18px_40px_-30px_rgba(15,23,42,.38)] ring-1 ring-slate-100"><div className="flex gap-1 text-amber-400">{Array.from({ length: 5 }, (_, i) => <Star key={i} className="h-3.5 w-3.5 fill-current" />)}</div><blockquote className="mt-6 text-lg font-medium leading-7 tracking-[-.02em] text-slate-800">&ldquo;{quote}&rdquo;</blockquote><div className="mt-auto flex items-center gap-3 pt-7"><span className={`grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br text-[11px] font-bold ${avatar}`}>{initials}</span><span><cite className="block text-sm font-bold not-italic text-slate-900">{name}</cite><span className="mt-0.5 block text-xs text-slate-500">{role}</span></span></div></Reveal>)}</div></section>
-
-      <section id="pricing" className="bg-white py-20 sm:py-28"><div className="mx-auto max-w-7xl px-5 sm:px-8"><Reveal className="mx-auto max-w-2xl text-center"><Eyebrow>FLEXIBLE FROM DAY ONE</Eyebrow><h2 className="text-4xl font-bold leading-[.98] tracking-[-0.065em] text-slate-950 sm:text-5xl">Start small. Grow without limits.</h2><p className="mt-5 text-base leading-7 text-slate-600">Accessible learning for every student, with powerful options for those ready to do more.</p></Reveal><div className="mt-16 grid gap-6 lg:grid-cols-3"><Reveal className="flex flex-col rounded-[1.5rem] border border-slate-200 p-7"><p className="text-sm font-bold text-slate-900">Student</p><p className="mt-5 text-4xl font-bold tracking-[-.07em] text-slate-950">$0<span className="text-base font-medium tracking-normal text-slate-400"> / month</span></p><p className="mt-4 text-sm leading-6 text-slate-500">A meaningful place to begin every learner's journey.</p><a href={APP_STORE_URL} className="mt-7 inline-flex justify-center rounded-full border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800 transition hover:border-orange-500 hover:text-orange-600">Get started free</a><ul className="mt-7 space-y-3 text-sm text-slate-600">{["Core curriculum quizzes", "Daily learning challenges", "Connect with friends", "Basic progress tracking"].map(item => <li key={item} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-emerald-500" />{item}</li>)}</ul></Reveal><Reveal delay={90} className="relative flex flex-col rounded-[1.5rem] bg-[#111827] p-7 text-white shadow-[0_24px_50px_-25px_rgba(15,23,42,.65)]"><span className="absolute right-6 top-0 -translate-y-1/2 rounded-full bg-amber-300 px-3 py-1 text-[10px] font-bold tracking-wide text-amber-950">MOST POPULAR</span><p className="text-sm font-bold text-white">Premium</p><p className="mt-5 text-4xl font-bold tracking-[-.07em]">$9.99<span className="text-base font-medium tracking-normal text-orange-200"> / month</span></p><p className="mt-4 text-sm leading-6 text-orange-50">For learners who want a deeper, more personal edge.</p><Button href={APP_STORE_URL} variant="inverse" className="mt-7 py-3">Download and start free</Button><ul className="mt-7 space-y-3 text-sm text-orange-50">{["Everything in Student", "Unlimited quiz practice", "Advanced learning insights", "Exclusive content and certificates", "Ad-free experience"].map(item => <li key={item} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-amber-300" />{item}</li>)}</ul></Reveal><Reveal delay={180} className="flex flex-col rounded-[1.5rem] border border-orange-100 bg-orange-50/50 p-7"><div className="flex items-center justify-between"><p className="text-sm font-bold text-slate-900">For schools</p><GraduationCap className="h-5 w-5 text-orange-600" /></div><p className="mt-5 text-4xl font-bold tracking-[-.07em] text-slate-950">Custom</p><p className="mt-4 text-sm leading-6 text-slate-500">A complete learning environment, made around your community.</p><a href="mailto:schools@zedprepare.ai" className="mt-7 inline-flex justify-center rounded-full bg-orange-500 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600">Talk to our education team</a><ul className="mt-7 space-y-3 text-sm text-slate-600">{["Everything in Premium", "Teacher and admin dashboard", "Class management", "Bulk student accounts", "Dedicated school support"].map(item => <li key={item} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-emerald-500" />{item}</li>)}</ul></Reveal></div></div></section>
-
-      <section className="mx-auto max-w-4xl px-5 py-20 sm:px-8 sm:py-28"><Reveal className="mx-auto max-w-2xl text-center"><Eyebrow>HELPFUL ANSWERS</Eyebrow><h2 className="text-4xl font-bold leading-[.98] tracking-[-0.065em] text-slate-950 sm:text-5xl">Questions, answered.</h2></Reveal><div className="mt-12 border-t border-slate-200">{faqs.map(([question, answer], index) => <div key={question} className="border-b border-slate-200"><button className="flex w-full items-center justify-between gap-5 py-5 text-left text-[15px] font-bold text-slate-800 transition hover:text-orange-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500" onClick={() => setOpenFaq(openFaq === index ? -1 : index)} aria-expanded={openFaq === index}><span>{question}</span><span className={`grid h-7 w-7 shrink-0 place-items-center rounded-full transition ${openFaq === index ? "rotate-45 bg-orange-500 text-white" : "bg-slate-100 text-slate-500"}`}><Plus className="h-4 w-4" /></span></button><div className={`grid transition-all duration-300 ${openFaq === index ? "grid-rows-[1fr] pb-5 opacity-100" : "grid-rows-[0fr] opacity-0"}`}><p className="overflow-hidden max-w-2xl text-sm leading-6 text-slate-600">{answer}</p></div></div>)}</div></section>
-
-      <section className="mx-auto px-5 pb-20 sm:px-8 sm:pb-28"><Reveal className="relative mx-auto overflow-hidden rounded-[2rem] bg-orange-500 px-6 py-14 text-center text-white sm:px-12 sm:py-20"><div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,#fbbf24_0%,transparent_24%),radial-gradient(circle_at_80%_90%,#10b981_0%,transparent_23%)] opacity-80" /><div className="relative mx-auto max-w-2xl"><p className="text-[11px] font-bold tracking-[.16em] text-orange-100">YOUR NEXT CHAPTER STARTS HERE</p><h2 className="mt-5 text-4xl font-bold leading-[.98] tracking-[-.065em] sm:text-5xl">Ready to transform the way your students learn?</h2><p className="mx-auto mt-5 max-w-xl text-base leading-7 text-orange-50">Join learners and schools around the world as ZED brings every local curriculum, classroom, and community together on Android.</p><div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row"><a href={APP_STORE_URL} className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3.5 text-sm font-bold text-slate-950 shadow-lg transition hover:-translate-y-0.5 hover:bg-orange-50"><span className="text-lg leading-none">A</span> Get it on Google Play</a><a href={APP_STORE_URL} className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-5 py-3.5 text-sm font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20"><Play className="h-4 w-4 fill-current" /> Open the Android app</a></div></div></Reveal></section>
-    </main>
-
-    <footer id="footer" className="bg-[#111827] py-14 text-orange-50 sm:py-16">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1.2fr]">
-          <div>
-            <Logo light />
-            <p className="mt-5 max-w-xs text-sm leading-6 text-orange-100">Learn smarter. Grow together. Every learner deserves a path that feels made for them—wherever they are learning from.</p>
-            <div className="mt-6 flex gap-2">
-              {[[Send, "X"], [Heart, "Instagram"], [UsersRound, "LinkedIn"], [Globe2, "Facebook"]].map(([Icon, label]) => {
-                const IconElement = Icon as IconComponent;
-                return <a key={label as string} href="#footer" aria-label={label as string} className="grid h-8 w-8 place-items-center rounded-lg bg-white/10 text-orange-50 transition hover:bg-amber-300 hover:text-amber-950"><IconElement className="h-4 w-4" /></a>;
-              })}
-            </div>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white">Product</h3>
-            <ul className="mt-4 space-y-3 text-sm text-orange-100">
-              <li><a href="#features" className="hover:text-white">Features</a></li>
-              <li><a href="#curriculums" className="hover:text-white">Curriculum support</a></li>
-              <li><a href="#pricing" className="hover:text-white">Pricing</a></li>
-              <li><a href="#top" className="hover:text-white">Download app</a></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white">Company</h3>
-            <ul className="mt-4 space-y-3 text-sm text-orange-100">
-              <li><a href="#footer" className="hover:text-white">About ZED</a></li>
-              <li><a href="#footer" className="hover:text-white">Learning journal</a></li>
-              <li><a href="mailto:hello@zedprepare.ai" className="hover:text-white">Contact</a></li>
-              <li><a href="#schools" className="hover:text-white">For schools</a></li>
-              <li><Link to="/partnership" className="hover:text-white">Partnership</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white">Education</h3>
-            <ul className="mt-4 space-y-3 text-sm text-orange-100">
-              <li><Link to="/k-12" className="hover:text-white">K-12 Learning</Link></li>
-              <li><Link to="/higher-education" className="hover:text-white">Higher Education</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white">Legal</h3>
-            <ul className="mt-4 space-y-3 text-sm text-orange-100">
-              <li><Link to="/privacy" className="hover:text-white">Privacy Policy</Link></li>
-            </ul>
-          </div>
-        </div>
-        <div className="mt-12 flex flex-col gap-5 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[11px] text-orange-200/70">© 2026 ZED Prepare AI. All rights reserved.</p>
-          <div className="flex gap-6 text-[11px] text-orange-200/70">
-            <a href="#footer" className="hover:text-white">Terms</a>
-            <Link to="/privacy" className="hover:text-white">Privacy</Link>
-            <Link to="/k-12" className="hover:text-white">K-12</Link>
-            <Link to="/higher-education" className="hover:text-white">Higher Education</Link>
-            <Link to="/partnership" className="hover:text-white">Partnership</Link>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    {showDemo && <div className="fixed inset-0 z-[100] grid place-items-center bg-slate-950/70 px-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="demo-heading"><div className="relative w-full max-w-2xl overflow-hidden rounded-[1.5rem] bg-[#111827] p-6 text-white shadow-2xl sm:p-9"><button onClick={() => setShowDemo(false)} aria-label="Close video dialog" className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-white/10 hover:bg-white/20"><X className="h-4 w-4" /></button><div className="grid aspect-video place-items-center rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_50%_30%,#ea580c_0%,#334155_40%,#111827_100%)]"><button onClick={() => setShowDemo(false)} className="grid h-16 w-16 place-items-center rounded-full bg-white text-orange-600 shadow-xl transition hover:scale-105" aria-label="Play ZED Prepare AI demo"><Play className="ml-1 h-7 w-7 fill-current" /></button></div><h2 id="demo-heading" className="mt-6 text-2xl font-bold tracking-[-.04em]">A place for every student's next win.</h2><p className="mt-2 text-sm leading-6 text-orange-50">Explore a focused learning routine that works across classrooms, curricula, and communities.</p></div></div>}
-  </div>;
+  return arr[arr.length - 1];
 }
 
-function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/k-12" element={<K12 />} />
-      <Route path="/higher-education" element={<HigherEducation />} />
-      <Route path="/partnership" element={<Partnership />} />
-    </Routes>
-  );
+const target: Bowl = { tip: 0.3, half: 0.34, soft: 0.22 };
+const cur: Bowl = { tip: -0.3, half: 0.3, soft: 0.1 };
+let intro = true;
+
+const canvas = $<HTMLCanvasElement>('bg');
+const ctx = canvas.getContext('2d');
+if (!ctx) throw new Error('2D context unavailable');
+const W = 96, H = 60, N = 48;
+const image = ctx.createImageData(W, H);
+const C0 = hex('#ffffff'), C1 = hex('#ffe2c9'), C2 = hex('#ffb26b');
+
+function drawBowl(t: number): void {
+  const asp = innerWidth / innerHeight;
+  const tip = cur.tip + Math.sin(t * 0.00033 + 1.3) * 0.02;
+  const half = cur.half + Math.sin(t * 0.0005) * 0.015;
+  const soft = cur.soft, d = image.data;
+  const xs: number[] = [], ys: number[] = [];
+  if (tip > 0.02) {
+    for (let k = 0; k < N; k++) {
+      const yy = -0.3 + (tip + 0.3) * k / (N - 1);
+      xs.push(half * asp * Math.pow(Math.max(0, 1 - yy / tip), 0.72));
+      ys.push(yy);
+    }
+  }
+  for (let j = 0; j < H; j++) {
+    for (let i = 0; i < W; i++) {
+      let g = 0;
+      if (xs.length) {
+        const px = Math.abs((i + 0.5) / W - 0.5) * asp, py = (j + 0.5) / H;
+        let m = 1e9;
+        for (let k = 0; k < N - 1; k++) {
+          const ax = xs[k], ay = ys[k], bx = xs[k + 1] - ax, by = ys[k + 1] - ay;
+          const l = bx * bx + by * by;
+          const u = l ? clamp(((px - ax) * bx + (py - ay) * by) / l) : 0;
+          const dx = px - ax - u * bx, dy = py - ay - u * by;
+          m = Math.min(m, dx * dx + dy * dy);
+        }
+        let sd = Math.sqrt(m);
+        if (py < tip && px < half * asp * Math.pow(1 - py / tip, 0.72)) sd = -sd;
+        sd -= 0.25;
+        g = 1 - smooth((sd + soft) / (2 * soft));
+      }
+      const c = g < 0.38 ? mix(C0, C1, smooth(g / 0.38)) : mix(C1, C2, smooth((g - 0.38) / 0.62));
+      const o = (j * W + i) * 4;
+      d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = 255;
+    }
+  }
+  ctx.putImageData(image, 0, 0);
 }
 
-export default App;
+function loop(t: number): void {
+  if (!intro) {
+    const f = 0.12;
+    cur.tip += (target.tip - cur.tip) * f;
+    cur.half += (target.half - cur.half) * f;
+    cur.soft += (target.soft - cur.soft) * f;
+  }
+  drawBowl(t);
+  requestAnimationFrame(loop);
+}
+
+/* ---------- Scroll ---------- */
+const nav = $('nav'), stmt = $('stmt'), splitEl = $('split'), row = $('row'), viz = $('viz');
+
+function onScroll(): void {
+  const vh = innerHeight, q = scrollY / vh;
+  target.tip = lerpKey(KEYS.tip, q);
+  target.half = lerpKey(KEYS.half, q);
+  target.soft = lerpKey(KEYS.soft, q);
+
+  const s = clamp((q - 0.69) / 0.74);
+  stmt.style.transform = `translateY(${0.205 * (1 - s) * (1 - s) * vh}px)`;
+  const p = clamp((q - 0.56) / 2.03);
+  paint(stmtChars, p, 0.16, NAVY, REVEAL, '#ffffff');
+  nav.classList.toggle('on', p > 0.4);
+
+  const top = splitEl.getBoundingClientRect().top;
+  const p2 = clamp((0.8 - top / vh) / 0.65);
+  paint(h2, p2, 0.35, '#ffffff', PANEL_ACCENT, PANEL_GHOST);
+  row.classList.toggle('in', p2 > 0.92);
+  viz.style.transform = `scale(${1.08 - 0.08 * clamp(1 - top / vh)})`;
+}
+addEventListener('scroll', onScroll, { passive: true });
+addEventListener('resize', onScroll);
+
+/* ---------- Intro ---------- */
+requestAnimationFrame((t0: number) => {
+  document.body.classList.add('ready');
+  let start: number | null = null;
+  onScroll();
+  const step = (t: number): void => {
+    if (start === null) start = t;
+    const e = (t - start) / 1000, hp = clamp(e / 1.25);
+    paint(h1, hp, 0.35, NAVY, REVEAL, '#ffffff');
+    if (e > 0.25) {
+      const k = smooth((e - 0.25) / 1.05);
+      cur.tip = -0.3 + (target.tip + 0.3) * k;
+      cur.half = 0.3 + (target.half - 0.3) * k;
+      cur.soft = 0.1 + (target.soft - 0.1) * k;
+      if (e > 1.3) { intro = false; Object.assign(cur, target); }
+    } else {
+      cur.tip = -0.3; cur.half = 0.3; cur.soft = 0.1;
+    }
+    if (intro || hp < 1) requestAnimationFrame(step);
+  };
+  step(t0);
+  requestAnimationFrame(loop);
+});
+
+/* ---------- Scroll-in fades ---------- */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e) => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.rv').forEach((el) => io.observe(el));
+
+/* ---------- Mobile menu ---------- */
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+if (mobileMenuBtn && mobileMenu) {
+  mobileMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    mobileMenuBtn.classList.toggle('active');
+    mobileMenu.classList.toggle('active');
+  });
+
+  mobileMenu.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenuBtn.classList.remove('active');
+      mobileMenu.classList.remove('active');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!mobileMenu.contains(e.target as Node) && !mobileMenuBtn.contains(e.target as Node)) {
+      mobileMenuBtn.classList.remove('active');
+      mobileMenu.classList.remove('active');
+    }
+  });
+}

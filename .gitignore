@@ -41,3 +41,10 @@ next-env.d.ts
 
 # OS
 Thumbs.db
+
+# temp files
+*.backup.tsx
+*.backup.ts
+*.backup.js
+audit-screenshot-*.png
+zed-prepare-ts/
