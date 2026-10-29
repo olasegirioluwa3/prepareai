@@ -6,7 +6,7 @@ import {
   Layers3, Menu, MessageCircle, Play, Plus, Search, Send,
   Sparkles, Star, Target, Trophy, UsersRound, X, Zap,
 } from "lucide-react";
-import { Button, Eyebrow, Logo, LogoMark, Reveal } from "./components/ui";
+import { Button, Eyebrow, Logo, LogoMark, Reveal, TextReveal } from "./components/ui";
 import Privacy from "./pages/Privacy";
 import K12 from "./pages/K12";
 import HigherEducation from "./pages/HigherEducation";
