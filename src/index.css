@@ -145,6 +145,33 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
   background: linear-gradient(180deg, rgba(246, 248, 251, 0) 0%, rgba(246, 248, 251, 1) 100%);
 }
 
+/* Asymmetric layout utilities */
+.layout-split {
+  display: grid;
+  grid-template-columns: 58.3% 41.7%;
+  min-height: 100vh;
+}
+
+.layout-split-reverse {
+  display: grid;
+  grid-template-columns: 41.7% 58.3%;
+  min-height: 100vh;
+}
+
+/* Editorial spacing */
+.spacing-editorial > * + * {
+  margin-top: 1.5em;
+}
+
+/* Vertical rhythm */
+.vertical-rhythm-8 > * + * {
+  margin-top: 2rem;
+}
+
+.vertical-rhythm-12 > * + * {
+  margin-top: 3rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
